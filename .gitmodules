@@ -1,0 +1,3 @@
+[submodule "arduino"]
+	path = arduino
+	url = https://github.com/plenproject/plen__firmware_for_Arduino.git
