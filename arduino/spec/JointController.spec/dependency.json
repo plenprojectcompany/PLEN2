@@ -1,0 +1,8 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"JointController",
+		"Pin",
+		"System"
+	]
+}

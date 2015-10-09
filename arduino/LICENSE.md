@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2015.
+Copyright (c) 2015,
 
 - [Kazuyuki TAKASE](https://github.com/Guvalif)
 - [PLEN Project Company Ltd.](http://plen.jp)

@@ -1,0 +1,7 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"Pin",
+		"System"
+	]
+}
