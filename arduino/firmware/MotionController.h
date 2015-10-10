@@ -236,8 +236,8 @@ public:
 
 		@note
 		motion.jsonと同様な形式のJSON文字列を出力します。
-		ただし、"device"に対応する値は<string>ではなく、device_map.jsonで
-		定義されているような生IDの<ineteger>です。
+		ただし、"device"に対応する値は<string>ではなく、
+		device_map.jsonで定義されているようなIDの<ineteger>です。
 	*/
 	void dump(unsigned char slot);
 

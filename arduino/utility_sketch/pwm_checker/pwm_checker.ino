@@ -57,6 +57,6 @@ void loop()
 		system.USBSerial().print(pwm);
 		system.USBSerial().println(F(")"));
 
-		joint_ctrl._pwms[0] = pwm;
+		joint_ctrl.m_pwms[0] = pwm;
 	}
 }

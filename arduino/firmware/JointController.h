@@ -97,19 +97,19 @@ public:
 	};
 	
 	//! @brief パルス幅変調波の最小値
-	inline static const int PWM_MIN()       { return 493;  }
+	inline static const int PWM_MIN()       { return 480;  }
 
 	//! @brief パルス幅変調波の最大値
-	inline static const int PWM_MAX()       { return 810;  }
+	inline static const int PWM_MAX()       { return 820;  }
 
 	//! @brief パルス幅変調波の中間値
-	inline static const int PWM_NEUTRAL()   { return 652;  }
+	inline static const int PWM_NEUTRAL()   { return 650;  }
 
 	//! @brief 関節角度の最小値
-	inline static const int ANGLE_MIN()     { return -600; }
+	inline static const int ANGLE_MIN()     { return -700; }
 
 	//! @brief 関節角度の最大値
-	inline static const int ANGLE_MAX()     { return 600;  }
+	inline static const int ANGLE_MAX()     { return 700;  }
 
 	//! @brief 関節角度の中間値
 	inline static const int ANGLE_NEUTRAL() { return 0;    }

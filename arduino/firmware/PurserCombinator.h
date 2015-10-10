@@ -99,12 +99,6 @@ public:
 
 	/*!
 		@brief パーサの内部状態遷移メソッド
-
-		@note
-		USER_DEFINED_EVENT_HANDLER() にこのメソッドの処理を委譲することも可能です。
-
-		@sa
-		firmware.ino 内，loop() 関数の処理も併せてご参照ください。
 	*/
 	void transition();
 

@@ -69,11 +69,16 @@ namespace Utility
 		unsigned int temp = hexbytes2uint(bytes, size);
 		temp <<= (((sizeof(int) * 2) - size) * 4);
 
+		/*!
+			@note
+			avr-gccは算術シフトをサポートしているため(*)の行は必要ないが、
+			互換性のため以下の構成としている。
+		*/
 		int result = temp;
-		bool negative = (temp < 0);
+		bool negative = (result < 0); // (*)
 
 		result >>= (((sizeof(int) * 2) - size) * 4);
-		if (negative) result |= (0xffff << size);
+		if (negative) result |= (0xffff << size); // (*)
 
 		return result;
 	}
