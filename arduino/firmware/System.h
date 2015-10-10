@@ -32,7 +32,7 @@ private:
 	inline static const char* CODENAME()           { return "Cytisus"; }
 
 	//! @brief バージョン番号
-	inline static const char* VERSION()            { return "1.1.0";   }
+	inline static const char* VERSION()            { return "1.1.1";   }
 
 	//! @brief USBシリアルインタフェースの通信速度
 	inline static const long  USBSERIAL_BAUDRATE() { return 2000000L;  }
