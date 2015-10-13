@@ -78,7 +78,7 @@ namespace Utility
 		bool negative = (result < 0); // (*)
 
 		result >>= (((sizeof(int) * 2) - size) * 4);
-		if (negative) result |= (0xffff << size); // (*)
+		if (negative) result |= (0xffff << (size * 4)); // (*)
 
 		return result;
 	}
