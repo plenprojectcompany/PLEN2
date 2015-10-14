@@ -9,7 +9,7 @@ namespace
 
 void setup()
 {
-	// noop.
+	while (!Serial);
 }
 
 void loop()
@@ -21,6 +21,13 @@ void loop()
 		(setup()でいくらかdelay()を設定するでも可。)
 	*/
 	delay(100);
+
+	unsigned long begin = micros();
+	acc_gyro.sampling();
+	unsigned long end   = micros();
+
+	Serial.print(F("# exec time : AccelerationGyroSensor::sampling() = "));
+	Serial.println(end - begin);
 
 	acc_gyro.dump();
 }

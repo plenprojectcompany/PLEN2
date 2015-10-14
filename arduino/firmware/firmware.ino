@@ -7,6 +7,16 @@
 	(See also : http://opensource.org/licenses/mit-license.php)
 */
 
+#define _DEBUG false
+
+/*!
+	@note
+	このマクロの値をtrueにすることで、PLENに自然な動きを適用します。
+	ただし、シリアル通信の帯域を圧迫するため、ユーザからの操作を受け付けづらくなります。
+*/
+#define _ENSOUL_PLEN2 false
+
+
 // 標準ライブラリ
 #include <string.h>
 
@@ -15,16 +25,18 @@
 #include <Wire.h>
 
 // 独自ライブラリ
-#include "AccelerationGyroSensor.h"
 #include "Interpreter.h"
 #include "JointController.h"
 #include "MotionController.h"
+#include "Pin.h"
 #include "Purser.h"
 #include "PurserCombinator.h"
 #include "System.h"
 
-// マクロ
-#define _DEBUG false
+#if _ENSOUL_PLEN2
+	#include "AccelerationGyroSensor.h"
+	#include "Soul.h"
+#endif
 
 
 namespace Utility
@@ -71,14 +83,13 @@ namespace Utility
 
 		/*!
 			@note
-			avr-gccは算術シフトをサポートしているため(*)の行は必要ないが、
-			互換性のため以下の構成としている。
+			avr-gccは算術シフトをサポートしているため、(*)の行は必要ない。
 		*/
 		int result = temp;
-		bool negative = (result < 0); // (*)
+		// bool negative = (result < 0); // (*)
 
 		result >>= (((sizeof(int) * 2) - size) * 4);
-		if (negative) result |= (0xffff << (size * 4)); // (*)
+		// if (negative) result |= (0xffff << (size * 4)); // (*)
 
 		return result;
 	}
@@ -88,11 +99,15 @@ namespace Utility
 namespace
 {
 	// コアインスタンス
-	PLEN2::AccelerationGyroSensor sensor;
-	PLEN2::JointController        joint_ctrl;
-	PLEN2::MotionController       motion_ctrl(joint_ctrl);
-	PLEN2::Interpreter            interpreter(motion_ctrl);
-	PLEN2::System                 system;
+	PLEN2::JointController  joint_ctrl;
+	PLEN2::MotionController motion_ctrl(joint_ctrl);
+	PLEN2::Interpreter      interpreter(motion_ctrl);
+	PLEN2::System           system;
+
+	#if _ENSOUL_PLEN2
+		PLEN2::AccelerationGyroSensor sensor;
+		PLEN2::Soul soul(sensor, motion_ctrl);
+	#endif
 
 
 	// アプリケーションインスタンス
@@ -110,10 +125,10 @@ namespace
 		PLEN2::MotionController::Frame  m_frame_tmp;
 		PLEN2::Interpreter::Code        m_code_tmp;
 
-		void angleDiff()
+		void applyDiff()
 		{
 			#if _DEBUG
-				system.outputSerial().println(F("# in event handler : Application::angleDiff()"));
+				system.outputSerial().println(F("# in event handler : Application::applyDiff()"));
 
 				system.outputSerial().print(F("> joint_id : "));
 				system.outputSerial().println(Utility::hexbytes2uint(m_buffer.data, 2));
@@ -130,10 +145,10 @@ namespace
 			#endif
 		}
 
-		void angle()
+		void apply()
 		{
 			#if _DEBUG
-				system.outputSerial().println(F("# in event handler : Application::angle()"));
+				system.outputSerial().println(F("# in event handler : Application::apply()"));
 
 				system.outputSerial().print(F("> joint_id : "));
 				system.outputSerial().println(Utility::hexbytes2uint(m_buffer.data, 2));
@@ -230,10 +245,10 @@ namespace
 			#endif
 		}
 
-		void setHomeAngle()
+		void setHome()
 		{
 			#if _DEBUG
-				system.outputSerial().println(F("# in event handler : Application::setHomeAngle()"));
+				system.outputSerial().println(F("# in event handler : Application::setHome()"));
 
 				system.outputSerial().print(F("> joint_id : "));
 				system.outputSerial().println(Utility::hexbytes2uint(m_buffer.data, 2));
@@ -261,10 +276,10 @@ namespace
 			#endif
 		}
 
-		void setMaxAngle()
+		void setMax()
 		{
 			#if _DEBUG
-				system.outputSerial().println(F("# in event handler : Application::setMaxAngle()"));
+				system.outputSerial().println(F("# in event handler : Application::setMax()"));
 
 				system.outputSerial().print(F("> joint_id : "));
 				system.outputSerial().println(Utility::hexbytes2uint(m_buffer.data, 2));
@@ -441,10 +456,10 @@ namespace
 			#endif
 		}
 
-		void setMinAngle()
+		void setMin()
 		{
 			#if _DEBUG
-				system.outputSerial().println(F("# in event handler : Application::setMinAngle()"));
+				system.outputSerial().println(F("# in event handler : Application::setMin()"));
 
 				system.outputSerial().print(F("> joint_id : "));
 				system.outputSerial().println(Utility::hexbytes2uint(m_buffer.data, 2));
@@ -512,13 +527,17 @@ namespace
 				unsigned char cmd_id    = m_purser[COMMAND_INCOMING]->index();
 
 				(this->*EVENT_HANDLER[header_id][cmd_id])();
+
+				#if _ENSOUL_PLEN2
+					soul.userActionInputed();
+				#endif
 			}
 		}
 	};
 
 	void (Application::*Application::CONTROLLER_EVENT_HANDLER[])() = {
-		&Application::angleDiff,
-		&Application::angle,
+		&Application::applyDiff,
+		&Application::apply,
 		&Application::homePosition,
 		&Application::playMotion,
 		&Application::stopMotion,
@@ -533,13 +552,13 @@ namespace
 	};
 
 	void (Application::*Application::SETTER_EVENT_HANDLER[])() = {
-		&Application::setHomeAngle,
+		&Application::setHome,
 		&Application::setMotionHeader, // sanity check.
 		&Application::setJointSettings,
-		&Application::setMaxAngle,
+		&Application::setMax,
 		&Application::setMotionFrame,
 		&Application::setMotionHeader,
-		&Application::setMinAngle
+		&Application::setMin
 	};
 
 	void (Application::*Application::GETTER_EVENT_HANDLER[])() = {
@@ -570,7 +589,18 @@ namespace
 */
 void setup()
 {
+	randomSeed(analogRead(PLEN2::Pin::RANDOM_DEVCIE_IN()));
+
 	joint_ctrl.loadSettings();
+
+	#if _ENSOUL_PLEN2
+		/*!
+			@attention
+			バスを介してセンサ値を取得する場合、通信対象のファームウェアが
+			完全に立ち上がるのを待つ必要があります。
+		*/
+		delay(3000);
+	#endif
 }
 
 
@@ -630,4 +660,9 @@ void loop()
 			app_ctrl.transition();
 		}
 	}
+
+	#if _ENSOUL_PLEN2
+		soul.logging();
+		soul.action();
+	#endif
 }

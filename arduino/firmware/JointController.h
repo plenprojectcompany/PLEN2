@@ -20,9 +20,26 @@ namespace PLEN2
 	Atmega32u4では、ひとつのタイマでPWM信号を最大3ラインまで出力可能です。
 	1ラインに8出力のマルチプレクサを接続することで、計24個までのサーボモータを制御可能です。
 	<br><br>
-	PLEN2で用いるサーボモータの許容最小パルス幅は約0.86[msec]，許容最大パルス幅は約2.12[msec]と、
-	それぞれ実測値として確認されています。また、その際の可動範囲は約130[deg]となります。
-	ただし、本実装では個体差を考慮して少なめの可動範囲約120[deg]に見積もっています。
+	なお、PLEN1.4における各種PWM，角度の設定は以下の通りです。
+	@code
+	//! @brief パルス幅変調波の最小値
+	inline static const int PWM_MIN()       { return 492;  }
+
+	//! @brief パルス幅変調波の最大値
+	inline static const int PWM_MAX()       { return 816;  }
+
+	//! @brief パルス幅変調波の中間値
+	inline static const int PWM_NEUTRAL()   { return 654;  }
+
+	//! @brief 関節角度の最小値
+	inline static const int ANGLE_MIN()     { return -600; }
+
+	//! @brief 関節角度の最大値
+	inline static const int ANGLE_MAX()     { return 600;  }
+
+	//! @brief 関節角度の中間値
+	inline static const int ANGLE_NEUTRAL() { return 0;    }
+	@endcode
 */
 class PLEN2::JointController
 {

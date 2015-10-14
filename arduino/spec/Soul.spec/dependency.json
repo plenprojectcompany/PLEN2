@@ -1,0 +1,12 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"Pin",
+		"System",
+		"ExternalEEPROM",
+		"AccelerationGyroSensor",
+		"JointController",
+		"MotionController",
+		"Soul"
+	]
+}

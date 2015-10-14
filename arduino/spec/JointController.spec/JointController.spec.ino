@@ -29,7 +29,7 @@ namespace {
 
 	unsigned int angleDiff2PWM(unsigned char joint_id, int angle_diff)
 	{
-		unsigned int angle = constrain(
+		int angle = constrain(
 			angle_diff + joint_ctrl.getHomeAngle(joint_id),
 			joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id)
 		);

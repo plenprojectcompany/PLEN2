@@ -21,6 +21,12 @@
 #define _DEBUG      false
 #define _DEBUG_HARD false
 
+/*!
+	@note
+	PLEN1.4に本ファームウェアを適用する場合、falseにする。
+*/
+#define _CLOCK_WISE true
+
 #define _PLEN2__JOINTCONTROLLER__PWM_OUT_00_07_REGISTER OCR1C
 #define _PLEN2__JOINTCONTROLLER__PWM_OUT_08_15_REGISTER OCR1B
 #define _PLEN2__JOINTCONTROLLER__PWM_OUT_16_23_REGISTER OCR1A
@@ -382,7 +388,12 @@ bool PLEN2::JointController::setAngle(unsigned char joint_id, int angle)
 	m_pwms[joint_id] = map(
 		angle,
 		PLEN2::JointController::ANGLE_MIN(), PLEN2::JointController::ANGLE_MAX(),
-		PLEN2::JointController::PWM_MIN(),   PLEN2::JointController::PWM_MAX()
+
+		#if _CLOCK_WISE
+			PLEN2::JointController::PWM_MIN(), PLEN2::JointController::PWM_MAX()
+		#else
+			PLEN2::JointController::PWM_MAX(), PLEN2::JointController::PWM_MIN()
+		#endif
 	);
 
 	return true;
@@ -413,7 +424,12 @@ bool PLEN2::JointController::setAngleDiff(unsigned char joint_id, int angle_diff
 	m_pwms[joint_id] = map(
 		angle,
 		PLEN2::JointController::ANGLE_MIN(), PLEN2::JointController::ANGLE_MAX(),
-		PLEN2::JointController::PWM_MIN(),   PLEN2::JointController::PWM_MAX()
+
+		#if _CLOCK_WISE
+			PLEN2::JointController::PWM_MIN(), PLEN2::JointController::PWM_MAX()
+		#else
+			PLEN2::JointController::PWM_MAX(), PLEN2::JointController::PWM_MIN()
+		#endif
 	);
 
 	return true;

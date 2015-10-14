@@ -62,6 +62,7 @@ void PLEN2::AccelerationGyroSensor::sampling()
 	*/
 	digitalWrite(Pin::RS485_TXD(), HIGH);
 	system.BLESerial().write('<');
+	system.BLESerial().flush();
 
 	digitalWrite(Pin::RS485_TXD(), LOW);
 	char  read_count = 0;
@@ -86,6 +87,8 @@ void PLEN2::AccelerationGyroSensor::sampling()
 
 			break;
 		}
+
+		delay(1); // @attention 最適化対策と割り込みの疑似均等割り付けのために必須
 	}
 }
 

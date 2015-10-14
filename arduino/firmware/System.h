@@ -32,7 +32,7 @@ private:
 	inline static const char* CODENAME()           { return "Cytisus"; }
 
 	//! @brief バージョン番号
-	inline static const char* VERSION()            { return "1.1.2";   }
+	inline static const char* VERSION()            { return "1.2.0";   }
 
 	//! @brief USBシリアルインタフェースの通信速度
 	inline static const long  USBSERIAL_BAUDRATE() { return 2000000L;  }
@@ -67,11 +67,6 @@ public:
 		@brief  入力シリアルインスタンスの取得メソッド
 
 		@return 入力シリアルインスタンスの参照
-
-		@attention
-		このメソッドにより取得される入力シリアルインスタンスは、
-		実行タイミングによって異なる可能性が存在します。
-		つまり、戻り値をキャッシュして使い回した際の動作は不定となります。
 	*/
 	Stream& inputSerial();
 
@@ -91,7 +86,7 @@ public:
 		@brief タイマ1割り込みの禁止メソッド
 
 		@attention
-		突然PWM信号が遮断されることで、意図しない角度に回転するサーボモータは多いです。
+		サーボモータへのPWM信号が突然遮断されると、多くの場合意図しない角度に回転してしまいます。
 		そのため、単純にサーボモータの動きを止めるためにこのメソッドを使うことは推奨されません。
 	*/
 	void timer1Detach();

@@ -49,6 +49,9 @@ namespace PLEN2
 
 		//! @brief LEDの出力先
 		inline static const int LED_OUT()             { return 13; }
+
+		//! @brief ランダムデバイスの入力先
+		inline static const int RANDOM_DEVCIE_IN()    { return 6;  }
 	}
 }
 
