@@ -136,7 +136,7 @@ namespace
 void PLEN2::PurserCombinator::m_abort()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : PurserCombinator::m_abort()"));
+		system.outputSerial().println(F("=== running in function : PurserCombinator::m_abort()"));
 	#endif
 
 	m_store_length    = 1;
@@ -160,7 +160,7 @@ PLEN2::PurserCombinator::PurserCombinator()
 void PLEN2::PurserCombinator::readByte(char byte)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : PurserCombinator::readByte()"));
+		system.outputSerial().println(F("=== running in function : PurserCombinator::readByte()"));
 	#endif
 
 	m_buffer.data[m_buffer.position] = byte;
@@ -173,7 +173,7 @@ void PLEN2::PurserCombinator::readByte(char byte)
 bool PLEN2::PurserCombinator::accept()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : PurserCombinator::accept()"));
+		system.outputSerial().println(F("=== running in function : PurserCombinator::accept()"));
 	#endif
 
 	if (m_buffer.position < m_store_length)
@@ -197,7 +197,7 @@ void PLEN2::PurserCombinator::transition()
 	beforeFook();
 
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : PurserCombinator::transition()"));
+		system.outputSerial().println(F("=== running in function : PurserCombinator::transition()"));
 	#endif
 
 	switch (m_state)
@@ -275,7 +275,7 @@ void PLEN2::PurserCombinator::transition()
 void PLEN2::PurserCombinator::beforeFook()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : PurserCombinator::beforeFook()"));
+		system.outputSerial().println(F("=== running in function : PurserCombinator::beforeFook()"));
 	#endif
 }
 
@@ -283,6 +283,6 @@ void PLEN2::PurserCombinator::beforeFook()
 void PLEN2::PurserCombinator::afterFook()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : PurserCombinator::afterFook()"));
+		system.outputSerial().println(F("=== running in function : PurserCombinator::afterFook()"));
 	#endif
 }

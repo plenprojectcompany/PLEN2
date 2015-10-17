@@ -49,7 +49,7 @@ namespace
 void PLEN2::AccelerationGyroSensor::sampling()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::sampling()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::sampling()"));
 	#endif
 
 	/*!
@@ -95,7 +95,7 @@ void PLEN2::AccelerationGyroSensor::sampling()
 const int& PLEN2::AccelerationGyroSensor::getAccX()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::getAccX()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getAccX()"));
 	#endif
 
 	return m_values[ACC_X];
@@ -104,7 +104,7 @@ const int& PLEN2::AccelerationGyroSensor::getAccX()
 const int& PLEN2::AccelerationGyroSensor::getAccY()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::getAccY()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getAccY()"));
 	#endif
 
 	return m_values[ACC_Y];
@@ -113,7 +113,7 @@ const int& PLEN2::AccelerationGyroSensor::getAccY()
 const int& PLEN2::AccelerationGyroSensor::getAccZ()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::getAccZ()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getAccZ()"));
 	#endif
 
 	return m_values[ACC_Z];
@@ -122,7 +122,7 @@ const int& PLEN2::AccelerationGyroSensor::getAccZ()
 const int& PLEN2::AccelerationGyroSensor::getGyroRoll()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::getGyroRoll()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getGyroRoll()"));
 	#endif
 
 	return m_values[GYRO_ROLL];
@@ -131,7 +131,7 @@ const int& PLEN2::AccelerationGyroSensor::getGyroRoll()
 const int& PLEN2::AccelerationGyroSensor::getGyroPitch()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::getGyroPitch()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getGyroPitch()"));
 	#endif
 
 	return m_values[GYRO_PITCH];
@@ -140,7 +140,7 @@ const int& PLEN2::AccelerationGyroSensor::getGyroPitch()
 const int& PLEN2::AccelerationGyroSensor::getGyroYaw()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::getGyroYaw()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getGyroYaw()"));
 	#endif
 
 	return m_values[GYRO_YAW];
@@ -149,7 +149,7 @@ const int& PLEN2::AccelerationGyroSensor::getGyroYaw()
 void PLEN2::AccelerationGyroSensor::dump()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : AccelerationGyroSensor::dump()"));
+		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::dump()"));
 	#endif
 
 	sampling();

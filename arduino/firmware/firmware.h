@@ -11,7 +11,7 @@
 	PLEN2 - Firmware for Arduino (Atmega32u4)
 	================================================================================
 
-	Code name "Cytisus" (version 1.2.0) is now available!
+	Code name "Cytisus" (version 1.2.1) is now available!
 
 	Attention!
 	---
@@ -20,7 +20,7 @@
 
 	Copyright (c) 2015,
 	---
-	- [Kazuyuki TAKASE](https://github.com/Guvalif)
+	- [Kazuyuki TAKASE](https://github.com/Guvalif), Project manager of the repository.
 	- [PLEN Project Company Ltd.](http://plen.jp)
 
 	API Guide

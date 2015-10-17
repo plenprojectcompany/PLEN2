@@ -1,4 +1,5 @@
-#line 2 "Soul.spec.ino"
+#line 2 "Soul.operation.spec.ino"
+
 
 // Arduinoライブラリ
 #include <EEPROM.h>

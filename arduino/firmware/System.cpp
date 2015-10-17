@@ -60,7 +60,7 @@ Stream& PLEN2::System::outputSerial()
 void PLEN2::System::timer1Attach()
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in fuction : System::timer1Attach()"));
+		outputSerial().println(F("=== running in function : System::timer1Attach()"));
 	#endif
 
 	TIMSK1 = _BV(TOIE1);
@@ -70,7 +70,7 @@ void PLEN2::System::timer1Attach()
 void PLEN2::System::timer1Detach()
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in fuction : System::timer1Detach()"));
+		outputSerial().println(F("=== running in function : System::timer1Detach()"));
 	#endif
 
 	TIMSK1 &= ~_BV(TOIE1);
@@ -80,7 +80,7 @@ void PLEN2::System::timer1Detach()
 void PLEN2::System::dump()
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in fuction : System::dump()"));
+		outputSerial().println(F("=== running in function : System::dump()"));
 	#endif
 
 	outputSerial().println(F("{"));

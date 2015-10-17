@@ -41,7 +41,7 @@ int PLEN2::ExternalEEPROM::readSlot(
 )
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : ExternalEEPROM::readSlot()"));
+		system.outputSerial().println(F("=== running in function : ExternalEEPROM::readSlot()"));
 	#endif
 
 	if (   (slot >= SLOT_END())
@@ -110,7 +110,7 @@ int PLEN2::ExternalEEPROM::writeSlot(
 )
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : ExternalEEPROM::writeSlot()"));
+		system.outputSerial().println(F("=== running in function : ExternalEEPROM::writeSlot()"));
 	#endif
 
 	if (   (slot >= SLOT_END())

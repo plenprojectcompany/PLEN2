@@ -84,7 +84,7 @@ PLEN2::JointController::JointController()
 void PLEN2::JointController::loadSettings()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::loadSettings()"));
+		system.outputSerial().println(F("=== running in function : JointController::loadSettings()"));
 	#endif
 
 	unsigned char* filler = (unsigned char*)m_SETTINGS;
@@ -144,7 +144,7 @@ void PLEN2::JointController::loadSettings()
 void PLEN2::JointController::resetSettings()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::resetSettings()"));
+		system.outputSerial().println(F("=== running in function : JointController::resetSettings()"));
 	#endif
 
 	unsigned char* filler = (unsigned char*)m_SETTINGS_INITIAL;
@@ -169,7 +169,7 @@ void PLEN2::JointController::resetSettings()
 int PLEN2::JointController::getMinAngle(unsigned char joint_id)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::getMinAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::getMinAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -189,7 +189,7 @@ int PLEN2::JointController::getMinAngle(unsigned char joint_id)
 int PLEN2::JointController::getMaxAngle(unsigned char joint_id)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::getMaxAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::getMaxAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -209,7 +209,7 @@ int PLEN2::JointController::getMaxAngle(unsigned char joint_id)
 int PLEN2::JointController::getHomeAngle(unsigned char joint_id)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::getHomeAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::getHomeAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -229,7 +229,7 @@ int PLEN2::JointController::getHomeAngle(unsigned char joint_id)
 bool PLEN2::JointController::setMinAngle(unsigned char joint_id, int angle)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::setMinAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::setMinAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -276,7 +276,7 @@ bool PLEN2::JointController::setMinAngle(unsigned char joint_id, int angle)
 bool PLEN2::JointController::setMaxAngle(unsigned char joint_id, int angle)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::setMaxAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::setMaxAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -323,7 +323,7 @@ bool PLEN2::JointController::setMaxAngle(unsigned char joint_id, int angle)
 bool PLEN2::JointController::setHomeAngle(unsigned char joint_id, int angle)
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::setHomeAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::setHomeAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -370,7 +370,7 @@ bool PLEN2::JointController::setHomeAngle(unsigned char joint_id, int angle)
 bool PLEN2::JointController::setAngle(unsigned char joint_id, int angle)
 {
 	#if _DEBUG_HARD
-		system.outputSerial().println(F("=== in fuction : JointController::setAngle()"));
+		system.outputSerial().println(F("=== running in function : JointController::setAngle()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -403,7 +403,7 @@ bool PLEN2::JointController::setAngle(unsigned char joint_id, int angle)
 bool PLEN2::JointController::setAngleDiff(unsigned char joint_id, int angle_diff)
 {
 	#if _DEBUG_HARD
-		system.outputSerial().println(F("=== in fuction : JointController::setAngleDiff()"));
+		system.outputSerial().println(F("=== running in function : JointController::setAngleDiff()"));
 	#endif
 
 	if (joint_id >= SUM())
@@ -439,7 +439,7 @@ bool PLEN2::JointController::setAngleDiff(unsigned char joint_id, int angle_diff
 void PLEN2::JointController::dump()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : JointController::dump()"));
+		system.outputSerial().println(F("=== running in function : JointController::dump()"));
 	#endif
 
 	system.outputSerial().println(F("{"));

@@ -627,6 +627,17 @@ void loop()
 			if (motion_ctrl.nextFrameLoadable())
 			{
 				motion_ctrl.loadNextFrame();
+
+				/*!
+					@attention
+					オペレーションテストでは発生しない、本構成のみにおいて発生するインタプリタ実行時の
+					モーションフレームオーバーフローを回避するために必須！
+				*/
+				if (   (motion_ctrl.playing() == false)
+					&& interpreter.ready() )
+				{
+					interpreter.popCode();
+				}
 			}
 			else
 			{

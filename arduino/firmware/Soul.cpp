@@ -53,7 +53,7 @@ PLEN2::Soul::Soul(AccelerationGyroSensor& sensor, MotionController& motion_ctrl)
 void PLEN2::Soul::logging()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : Soul::logging()"));
+		system.outputSerial().println(F("=== running in function : Soul::logging()"));
 	#endif
 
 	static unsigned char call_count = 0;
@@ -117,7 +117,7 @@ void PLEN2::Soul::logging()
 void PLEN2::Soul::userActionInputed()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : Soul::userActionInputed()"));
+		system.outputSerial().println(F("=== running in function : Soul::userActionInputed()"));
 	#endif
 
 	m_before_user_action_msec = millis();
@@ -127,7 +127,7 @@ void PLEN2::Soul::userActionInputed()
 void PLEN2::Soul::action()
 {
 	#if _DEBUG
-		system.outputSerial().println(F("=== in fuction : Soul::action()"));
+		system.outputSerial().println(F("=== running in function : Soul::action()"));
 	#endif
 
 	if (m_lying == true)

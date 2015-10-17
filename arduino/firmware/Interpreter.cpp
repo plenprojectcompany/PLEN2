@@ -45,13 +45,13 @@ PLEN2::Interpreter::Interpreter(MotionController& motion_crtl)
 bool PLEN2::Interpreter::pushCode(const Code& code)
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in function : Interpreter::pushCode()"));
+		system.outputSerial().println(F("=== running in function : Interpreter::pushCode()"));
 	#endif
 
 	if (getIndex(m_queue_end + 1) == m_queue_begin)
 	{
 		#if _DEBUG
-			outputSerial().println(F(">>> error : Queue overflow!"));
+			system.outputSerial().println(F(">>> error : Queue overflow!"));
 		#endif
 
 		return false;
@@ -66,13 +66,13 @@ bool PLEN2::Interpreter::pushCode(const Code& code)
 bool PLEN2::Interpreter::popCode()
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in function : Interpreter::popCode()"));
+		system.outputSerial().println(F("=== running in function : Interpreter::popCode()"));
 	#endif
 
 	if (!ready())
 	{
 		#if _DEBUG
-			outputSerial().println(F(">>> error : This is not ready!"));
+			system.outputSerial().println(F(">>> error : This is not ready!"));
 		#endif
 
 		return false;
@@ -107,7 +107,7 @@ bool PLEN2::Interpreter::popCode()
 bool PLEN2::Interpreter::ready()
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in function : Interpreter::ready()"));
+		system.outputSerial().println(F("=== running in function : Interpreter::ready()"));
 	#endif
 
 	return (m_queue_begin != m_queue_end);
@@ -116,7 +116,7 @@ bool PLEN2::Interpreter::ready()
 void PLEN2::Interpreter::reset()
 {
 	#if _DEBUG
-		outputSerial().println(F("=== in function : Interpreter::reset()"));
+		system.outputSerial().println(F("=== running in function : Interpreter::reset()"));
 	#endif
 
 	m_queue_begin = 0;
