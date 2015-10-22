@@ -6,10 +6,11 @@ The world's first printable open-source humanoid.
 Getting Started
 ---------------
 1. Download this repository.
-2. Get control boards and servo motors. [Buy all!](http://shop.plen.jp/)
+2. Get control boards and servo motors. [Buy all!](http://plen.jp/shop/)
 3. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
 4. Install firmware. (This is placed "/arduino/firmware/" directory.)
-5. Write all motions. (Please check "/motion/*/" directory and use [MotionInstaller](https://drive.google.com/folderview?id=0B5Wd2RxpBbWQOWRoelRZaVB0SkU&usp=drive_web).)
+5. Write all motions. (Please check "/motion/*/" directory and use MotionInstaller
+   ([win](https://github.com/plenproject/plen__motion_installer_gui_win/releases) or mac).)
 6. Hello, world where PLEN is!
 
 Enjoy More, with PLEN :)
