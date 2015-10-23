@@ -10,7 +10,8 @@ Getting Started
 3. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
 4. Install firmware. (This is placed "/arduino/firmware/" directory.)
 5. Write all motions. (Please check "/motion/*/" directory and use MotionInstaller
-   ([win](https://github.com/plenproject/plen__motion_installer_gui_win/releases) or mac).)
+   ([win](https://github.com/plenproject/plen__motion_installer_gui_win/releases) or
+   [mac](https://github.com/plenproject/plen__motion_installer_gui_mac/releases)).)
 6. Hello, world where PLEN is!
 
 Enjoy More, with PLEN :)
