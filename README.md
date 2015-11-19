@@ -7,12 +7,14 @@ Getting Started
 ---------------
 1. Download this repository.
 2. Get control boards and servo motors. [Buy all!](http://plen.jp/shop/)
-3. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
-4. Install firmware. (This is placed "/arduino/firmware/" directory.)
-5. Write all motions. (Please check "/motion/*/" directory and use MotionInstaller
+3. Install firmware. (This is placed "/arduino/firmware/" directory.)
+4. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
+5. Configure home positions of joints. (This step is done by using
+   [PLENUtilities](https://github.com/plenproject/plen__control_server/releases).)
+6. Write all motions. (Please check "/motion/*/" directory and use MotionInstaller
    ([win](https://github.com/plenproject/plen__motion_installer_gui_win/releases) or
    [mac](https://github.com/plenproject/plen__motion_installer_gui_mac/releases)).)
-6. Hello, world where PLEN is!
+7. Hello, world where PLEN is!
 
 Enjoy More, with PLEN :)
 ------------------------
@@ -23,7 +25,7 @@ Enjoy More, with PLEN :)
 
 Laws of PLEN
 ------------
-You could use PLEN for every imaginable things, but, in that case, please observe the following laws strictly.
+You could use PLEN for every imaginable things, but please observe the following laws strictly.
 
 1. PLEN must not fight.
 2. PLEN must not give someone a feeling of discomfort.
