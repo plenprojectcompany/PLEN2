@@ -1,41 +1,93 @@
 #line 2 "Interpreter.operation.spec.ino"
 
 
-// Arduinoライブラリ関連
 #include <Wire.h>
 #include <EEPROM.h>
 
-// 独自ライブラリ関連
+#include "System.h"
+#include "ExternalEEPROM.h"
+#include "Parser.h"
+#include "Protocol.h"
 #include "JointController.h"
+#include "Motion.h"
 #include "MotionController.h"
 #include "Interpreter.h"
 
 
-// ファイル内グローバルインスタンスの定義
 namespace
 {
 	PLEN2::JointController  joint_ctrl;
 	PLEN2::MotionController motion_ctrl(joint_ctrl);
 	PLEN2::Interpreter      interpreter(motion_ctrl);
 
-	PLEN2::Interpreter::Code code_obj;
+
+	class OperationTest: public PLEN2::Protocol
+	{
+	private:
+		void popCode()
+		{
+			interpreter.popCode();
+		}
+
+		void pushCode()
+		{
+			PLEN2::Interpreter::Code code;
+			code.slot       = Utility::hexbytes2uint(m_buffer.data, 2);
+			code.loop_count = Utility::hexbytes2uint(m_buffer.data + 2, 2);
+
+			interpreter.pushCode(code);
+		}
+
+		void resetInterpreter()
+		{
+			interpreter.reset();
+		}
+
+	public:
+		virtual void afterHook()
+		{
+			if (m_state == READY)
+			{
+				unsigned char header_id = m_parser[HEADER_INCOMING ]->index();
+				unsigned char cmd_id    = m_parser[COMMAND_INCOMING]->index();
+
+				if ((header_id == 1) && (cmd_id == 0))
+				{
+					popCode();
+				}
+
+				if ((header_id == 1) && (cmd_id == 1))
+				{
+					pushCode();
+				}
+
+				if ((header_id == 1) && (cmd_id == 2))
+				{
+					resetInterpreter();
+				}
+			}
+		}
+	};
+
+	OperationTest test_core;
 }
 
 
 /*!
-	@brief アプリケーション・エントリポイント
+	@brief Application entry point
 */
 void setup()
 {
-	while (!Serial); // for the Arduino Leonardo/Micro only.
-
-	Serial.println("Test started.");
-	Serial.println("=============");
+	volatile PLEN2::System         system;
+	volatile PLEN2::ExternalEEPROM exteeprom;
 
 	joint_ctrl.loadSettings();
 
-	code_obj.slot = 0;
-	code_obj.loop_count = 0;
+
+	while (!Serial); // for the Arduino Leonardo/Micro only.
+
+	PLEN2::System::outputSerial().print(F("# Test : "));
+	PLEN2::System::outputSerial().println(__FILE__);
 }
 
 void loop()
@@ -44,10 +96,10 @@ void loop()
 	{
 		if (motion_ctrl.frameUpdatable())
 		{
-			motion_ctrl.frameUpdate();
+			motion_ctrl.updateFrame();
 		}
 
-		if (motion_ctrl.frameUpdateFinished())
+		if (motion_ctrl.updatingFinished())
 		{
 			if (motion_ctrl.nextFrameLoadable())
 			{
@@ -65,23 +117,23 @@ void loop()
 		}
 	}
 
-	if (Serial.available())
+	if (PLEN2::System::USBSerial().available())
 	{
-		switch (Serial.read())
+		test_core.readByte(PLEN2::System::USBSerial().read());
+
+		if (test_core.accept())
 		{
-			case 'i':
-			{
-				interpreter.pushCode(code_obj);
+			test_core.transitState();
+		}
+	}
 
-				break;
-			}
+	if (PLEN2::System::BLESerial().available())
+	{
+		test_core.readByte(PLEN2::System::BLESerial().read());
 
-			case 'o':
-			{
-				interpreter.popCode();
-
-				break;
-			}
+		if (test_core.accept())
+		{
+			test_core.transitState();
 		}
 	}
 }

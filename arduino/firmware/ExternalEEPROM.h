@@ -1,12 +1,14 @@
 /*!
 	@file      ExternalEEPROM.h
-	@brief     外部EEPROMの管理クラスを提供します。
+	@brief     Management class of external EEPROM.
 	@author    Kazuyuki TAKASE
 	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
 
-#ifndef _PLEN2__EXTERNAL_EEPROM_H_
-#define _PLEN2__EXTERNAL_EEPROM_H_
+#pragma once
+
+#ifndef PLEN2_EXTERNAL_EEPROM_H
+#define PLEN2_EXTERNAL_EEPROM_H
 
 namespace PLEN2
 {
@@ -14,88 +16,85 @@ namespace PLEN2
 }
 
 /*!
-	@brief 外部EEPROMの管理クラス
+	@brief Management class of external EEPROM
 
 	@note
-	使用しているEEPROM，24FC1025は一度にアクセス可能な領域サイズが128byteですが、
-	ArduinoのWireライブラリのバッファサイズが32byteのため、性能を最大限に引き出すことはできません。
+	24FC1025 supports to access 128 bytes at once, but Arduino's I2C library is not supported the method
+	because the library's buffer size is 32 bytes.
 	<br><br>
-	また注意点として、書き込みの場合アドレス指定の2byteもこの32byteに含まれます。
-	つまり、1度に書き込み可能な正味の領域サイズは30byteとなります。
-	( CHUNK_SIZE() と SLOT_SIZE() の戻り値が異なるのはこれが理由です。)
-	
-	@todo
-	- I2Cライブラリのバッファサイズ拡張
+	Please pay attention to it is including bytes of targeted area address (= 2 bytes).
+	Accurate data size are 30 bytes that you can write.
+	(This is the reason that there are differences between CHUNK_SIZE() and SLOT_SIZE().)
 */
 class PLEN2::ExternalEEPROM
 {
 private:
-	//! @brief I2Cインタフェースの通信速度
+	//! @brief Communication clock of I2C interface
 	inline static const long CLOCK()         { return 400000L; }
-	
-	//! @brief メモリサイズ(byte)
+
+	//! @brief Size of external EEPROM (bytes)
 	inline static const long SIZE()          { return 0x20000L; }
-	
-	//! @brief I2Cネットワーク上での機器アドレス
+
+	//! @brief Device address on I2C network
 	inline static const int  ADDRESS()       { return 0x50; }
 
-	//! @brief 領域アドレス指定のバイト数
+	//! @brief Bytes of targeted area address
 	inline static const int  ADDRESS_BYTES() { return 2; }
-	
-	//! @brief メモリチップの選択ビット
+
+	//! @brief Selection bit of memory chip
 	inline static const int  SELECT_BIT()    { return 2; }
 
 public:
-	//! @brief 外部EEPROMの1チャンクの大きさ
+	//! @brief Chunk size of external EEPROM (bytes)
 	inline static const int CHUNK_SIZE() { return 32; }
 
-	//! @brief 外部EEPROMの1スロットの大きさ
+	//! @brief Slot size of external EEPROM (bytes)
 	inline static const int SLOT_SIZE()  { return (CHUNK_SIZE() - ADDRESS_BYTES()); }
 
-	//! @brief 外部EEPROMのスロット開始値
+	//! @brief Beginning value of slots
 	inline static const int SLOT_BEGIN() { return 0; }
 
-	//! @brief 外部EEPROMのスロット終了値
+	//! @brief End value of slots
 	inline static const int SLOT_END()   { return SIZE() / CHUNK_SIZE(); }
 
 	/*!
-		@brief コンストラクタ
+		@brief Constructor
 	*/
 	ExternalEEPROM();
 
 	/*!
-		@brief 外部EEPROMを1スロットごとに読み込むメソッド
+		@brief Read a slot of external EEPROM
 
-		@param [in]  slot      読み込みたいスロットを番号で指定します。
-		@param [out] data[]    スロットから読み込んだデータを格納する配列を指定します。
-		@param [in]  read_size スロットから読み込みたいデータサイズを指定します。
+		@param [in]  slot      Please set slot number you want to read.
+		@param [out] data[]    Please set buffer to store reading data.
+		@param [in]  read_size Please set buffer size.
 
-		@return 実行結果
-		@retval 非0 成功 (通常、read_sizeと同じ値となります。)
-		@retval -1  失敗
+		@return Result
+		@retval !0 Succeeded. (Generally, the value equals **read-size**.)
+		@retval -1 Failed.
 	*/
-	int readSlot(unsigned int slot, char data[], unsigned int read_size);
+	static char readSlot(unsigned int slot, char data[], unsigned char read_size);
 
 	/*!
-		@brief 外部EEPROMを1スロットごとに書き込むメソッド
+		@brief Write a slot of external EEPROM
 
-		@param [in] slot       書き込みたいスロットを番号で指定します。
-		@param [in] data[]     スロットへ書き込みたいデータを格納した配列を指定します。
-		@param [in] write_size スロットへ書き込みたいデータサイズを指定します。
+		@param [in] slot       Please set slot number you want to write.
+		@param [in] data[]     Please set buffer that stored writing data.
+		@param [in] write_size Please set buffer size.
 
-		@return 実行結果
-		@retval 0  成功
-		@retval -1 **write_size**がスロットサイズより大きい
-		@retval 1  送ろうとしたデータが送信バッファのサイズを超えた
-		@retval 2  スレーブ・アドレスを送信し、NACKを受信した
-		@retval 3  データ・バイトを送信し、NACKを受信した
-		@retval 4  その他のエラー
+		@return Result
+		@retval 0  Succeeded.
+		@retval -1 Argument error. (**write_size** is bigger than slot size.)
+		@retval 1  Sending-buffer overflow.
+		@retval 2  Received NACK after sending slave address.
+		@retval 3  Received NACK after sending data bytes.
+		@retval 4  Other errors were raised.
 
 		@attention
-		外部EEPROMへの書き込みには時間がかかります。(定格で3[msec]を要します。)
-		本実装では、メソッドの終了時にdelay()を5[msec]挿入してあります。
+		Writing external EEPROM requires time. (Typically using 3[msec].)
+		In the implementation, 5[msec] delay is inserted at end of the method.
 	*/
-	int writeSlot(unsigned int slot, const char data[], unsigned int write_size);
+	static char writeSlot(unsigned int slot, const char data[], unsigned char write_size);
 };
 
-#endif // _PLEN2__EXTERNAL_EEPROM_H_
+#endif // PLEN2_EXTERNAL_EEPROM_H

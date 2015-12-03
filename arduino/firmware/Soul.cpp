@@ -7,18 +7,21 @@
 	(See also : http://opensource.org/licenses/mit-license.php)
 */
 
-#define _DEBUG false
+#define DEBUG false
 
-// Arduinoライブラリ
-#include "Arduino.h"
+#include <Arduino.h>
 
-// 独自ライブラリ
 #include "Pin.h"
 #include "System.h"
 #include "AccelerationGyroSensor.h"
 #include "JointController.h"
+#include "Motion.h"
 #include "MotionController.h"
 #include "Soul.h"
+
+#if DEBUG
+	#include "Profiler.h"
+#endif
 
 
 namespace
@@ -30,9 +33,10 @@ namespace
 		EOE
 	};
 
-	long acc_backup[EOE] = { 0 };
-
-	PLEN2::System system;
+	namespace Shared
+	{
+		long acc_backup[EOE] = { 0 };
+	}
 }
 
 
@@ -50,74 +54,79 @@ PLEN2::Soul::Soul(AccelerationGyroSensor& sensor, MotionController& motion_ctrl)
 }
 
 
-void PLEN2::Soul::logging()
+void PLEN2::Soul::m_preprocess()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : Soul::logging()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("Soul::m_preprocess()"));
 	#endif
 
-	static unsigned char call_count = 0;
 
-	/*!
-		@note
-		通常、PLENが横たわっていると判定された後、即座に復帰処理が行われるため、
-		(*)の条件により以下のif文内部が実行されることはない。
-	*/
-	if (   (m_lying == true) // (*) sanity check.
-		|| (millis() < m_next_sampling_msec)
-		|| m_motion_ctrl_ptr->playing() )
+	if (m_log_count >= (GETUP_WAIT_MSEC() / SAMPLING_INTERVAL_MSEC()))
 	{
-		return;
-	}
+		Shared::acc_backup[X_AXIS] /= m_log_count;
+		Shared::acc_backup[Y_AXIS] /= m_log_count;
+		Shared::acc_backup[Z_AXIS] /= m_log_count;
 
-	/*!
-		@note
-		既にいずれかのシリアルへデータが到着している場合、
-		コマンドラインの撹乱を防ぐために処理を抜ける。
-	*/
-	if (   system.BLESerial().available()
-		|| system.USBSerial().available() )
-	{
-		return;
-	}
-
-	m_sensor_ptr->sampling();
-
-	acc_backup[X_AXIS] += m_sensor_ptr->getAccX();
-	acc_backup[Y_AXIS] += m_sensor_ptr->getAccY();
-	acc_backup[Z_AXIS] += m_sensor_ptr->getAccZ();
-
-	m_next_sampling_msec += SAMPLING_INTERVAL_MSEC();
-	call_count++;
-
-	if (call_count == (GETUP_WAIT_MSEC() / SAMPLING_INTERVAL_MSEC()))
-	{
-		acc_backup[X_AXIS] /= (GETUP_WAIT_MSEC() / SAMPLING_INTERVAL_MSEC());
-		acc_backup[Y_AXIS] /= (GETUP_WAIT_MSEC() / SAMPLING_INTERVAL_MSEC());
-		acc_backup[Z_AXIS] /= (GETUP_WAIT_MSEC() / SAMPLING_INTERVAL_MSEC());
-
-		if (   (abs(acc_backup[Y_AXIS]) > abs(acc_backup[X_AXIS]))
-			&& (abs(acc_backup[Y_AXIS]) > abs(acc_backup[Z_AXIS]))
-			&& (abs(acc_backup[Y_AXIS]) > GRAVITY_AXIS_THRESHOLD()) )
+		if (   (abs(Shared::acc_backup[Y_AXIS]) > abs(Shared::acc_backup[X_AXIS]))
+			&& (abs(Shared::acc_backup[Y_AXIS]) > abs(Shared::acc_backup[Z_AXIS]))
+			&& (abs(Shared::acc_backup[Y_AXIS]) > GRAVITY_AXIS_THRESHOLD()) )
 		{
 			m_lying = true;
 		}
 		else
 		{
-			acc_backup[X_AXIS] = 0;
-			acc_backup[Y_AXIS] = 0;
-			acc_backup[Z_AXIS] = 0;
+			Shared::acc_backup[X_AXIS] = 0;
+			Shared::acc_backup[Y_AXIS] = 0;
+			Shared::acc_backup[Z_AXIS] = 0;
 		}
 
-		call_count = 0;
+		m_log_count = 0;
 	}
+}
+
+
+void PLEN2::Soul::log()
+{
+	#if DEBUG
+		volatile Utility::Profiler p(F("Soul::log()"));
+	#endif
+
+
+	if (   m_motion_ctrl_ptr->playing()
+		|| (millis() < m_next_sampling_msec) )
+	{
+		return;
+	}
+
+	/*!
+		@note
+		If something data arrived in the serial buffer already,
+		return the method to keep the integrity of the data.
+	*/
+	if (   System::BLESerial().available()
+		|| System::USBSerial().available() )
+	{
+		return;
+	}
+
+
+	m_sensor_ptr->sampling();
+
+	Shared::acc_backup[X_AXIS] += m_sensor_ptr->getAccX();
+	Shared::acc_backup[Y_AXIS] += m_sensor_ptr->getAccY();
+	Shared::acc_backup[Z_AXIS] += m_sensor_ptr->getAccZ();
+
+	m_next_sampling_msec += SAMPLING_INTERVAL_MSEC();
+	m_log_count++;
+
+	m_preprocess();
 }
 
 
 void PLEN2::Soul::userActionInputed()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : Soul::userActionInputed()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("Soul::userActionInputed()"));
 	#endif
 
 	m_before_user_action_msec = millis();
@@ -126,13 +135,13 @@ void PLEN2::Soul::userActionInputed()
 
 void PLEN2::Soul::action()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : Soul::action()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("Soul::action()"));
 	#endif
 
-	if (m_lying == true)
+	if (m_lying)
 	{
-		if (acc_backup[Y_AXIS] < 0)
+		if (Shared::acc_backup[Y_AXIS] > 0)
 		{
 			m_motion_ctrl_ptr->play(SLOT_GETUP_FACE_DOWN());
 		}
@@ -143,9 +152,9 @@ void PLEN2::Soul::action()
 
 		m_lying = false;
 
-		acc_backup[X_AXIS] = 0;
-		acc_backup[Y_AXIS] = 0;
-		acc_backup[Z_AXIS] = 0;
+		Shared::acc_backup[X_AXIS] = 0;
+		Shared::acc_backup[Y_AXIS] = 0;
+		Shared::acc_backup[Z_AXIS] = 0;
 
 		return;
 	}

@@ -7,23 +7,25 @@
 	(See also : http://opensource.org/licenses/mit-license.php)
 */
 
+#define DEBUG false
 
-// 独自ライブラリ
+#include "Arduino.h"
 #include "Pin.h"
 #include "System.h"
 
+#if DEBUG
+	#include "Profiler.h"
+#endif
 
-// マクロ定義
-#define _DEBUG false
 
-#define _PLEN2__SYSTEM__USBSERIAL Serial
-#define _PLEN2__SYSTEM__BLESERIAL Serial1
+#define PLEN2_SYSTEM_USBSERIAL Serial
+#define PLEN2_SYSTEM_BLESERIAL Serial1
 
 
 PLEN2::System::System()
 {
-	_PLEN2__SYSTEM__BLESERIAL.begin(BLESERIAL_BAUDRATE());
-	_PLEN2__SYSTEM__USBSERIAL.begin(USBSERIAL_BAUDRATE());
+	PLEN2_SYSTEM_BLESERIAL.begin(BLESERIAL_BAUDRATE());
+	PLEN2_SYSTEM_USBSERIAL.begin(USBSERIAL_BAUDRATE());
 
 	pinMode(Pin::RS485_TXD(), OUTPUT);
 	pinMode(Pin::LED_OUT(),   OUTPUT);
@@ -35,65 +37,52 @@ PLEN2::System::System()
 
 Stream& PLEN2::System::USBSerial()
 {
-	return _PLEN2__SYSTEM__USBSERIAL;
+	return PLEN2_SYSTEM_USBSERIAL;
 }
 
 
 Stream& PLEN2::System::BLESerial()
 {
-	return _PLEN2__SYSTEM__BLESERIAL;
+	return PLEN2_SYSTEM_BLESERIAL;
 }
 
 
 Stream& PLEN2::System::inputSerial()
 {
-	return _PLEN2__SYSTEM__BLESERIAL;
+	return PLEN2_SYSTEM_BLESERIAL;
 }
 
 
 Stream& PLEN2::System::outputSerial()
 {
-	return _PLEN2__SYSTEM__USBSERIAL;
+	return PLEN2_SYSTEM_USBSERIAL;
 }
 
-
-void PLEN2::System::timer1Attach()
+Stream& PLEN2::System::debugSerial()
 {
-	#if _DEBUG
-		outputSerial().println(F("=== running in function : System::timer1Attach()"));
-	#endif
-
-	TIMSK1 = _BV(TOIE1);
-}
-
-
-void PLEN2::System::timer1Detach()
-{
-	#if _DEBUG
-		outputSerial().println(F("=== running in function : System::timer1Detach()"));
-	#endif
-
-	TIMSK1 &= ~_BV(TOIE1);
+	return PLEN2_SYSTEM_USBSERIAL;
 }
 
 
 void PLEN2::System::dump()
 {
-	#if _DEBUG
-		outputSerial().println(F("=== running in function : System::dump()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("System::dump()"));
 	#endif
 
 	outputSerial().println(F("{"));
-		outputSerial().print(F("\t\"device\": \""));
-		outputSerial().print(DEVICE());
-		outputSerial().println(F("\","));
 
-		outputSerial().print(F("\t\"codename\": \""));
-		outputSerial().print(CODENAME());
-		outputSerial().println(F("\","));
+	outputSerial().print(F("\t\"device\": \""));
+	outputSerial().print(DEVICE());
+	outputSerial().println(F("\","));
 
-		outputSerial().print(F("\t\"version\": \""));
-		outputSerial().print(VERSION());
-		outputSerial().println(F("\""));
+	outputSerial().print(F("\t\"codename\": \""));
+	outputSerial().print(CODENAME());
+	outputSerial().println(F("\","));
+
+	outputSerial().print(F("\t\"version\": \""));
+	outputSerial().print(VERSION());
+	outputSerial().println(F("\""));
+
 	outputSerial().println(F("}"));
 }

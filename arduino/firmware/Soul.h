@@ -1,12 +1,15 @@
 /*!
 	@file      Soul.h
-	@brief     自然な挙動をPLENに与えるクラスを提供します。
+	@brief     Provide the class which makes natural moving, for PLEN.
 	@author    Kazuyuki TAKASE
 	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
 
-#ifndef _PLEN2__SOUL_H_
-#define _PLEN2__SOUL_H_
+#pragma once
+
+#ifndef PLEN2_SOUL_H
+#define PLEN2_SOUL_H
+
 
 namespace PLEN2
 {
@@ -17,37 +20,40 @@ namespace PLEN2
 }
 
 /*!
-	@brief 自然な挙動をPLENに与えるクラス
+	@brief The class which makes natural moving, for PLEN
 */
 class PLEN2::Soul
 {
 private:
-	//! 仰向けからの起き上がりモーションの配置スロット
+	//! @brief Slot of get up (face up) motion
 	inline static const int SLOT_GETUP_FACE_UP()     { return 88;    }
 
-	//! うつ伏せからの起き上がりモーションの配置スロット
+	//! @brief Slot of get up (face down) motion
 	inline static const int SLOT_GETUP_FACE_DOWN()   { return 89;    }
 
-	//! ランダムに切り替えるモーションの開始スロット
+	//! @brief Beginning slot of random motion patterns
 	inline static const int MOTIONS_SLOT_BEGIN()     { return 83;    }
 
-	//! ランダムに切り替えるモーションの終了スロット
+	//! @brief Ending slot of random motion patterns
 	inline static const int MOTIONS_SLOT_END()       { return 88;    }
 
-	//! 挙動をランダムに切り替える基本間隔
+	//! @brief The interval which makes stated periods
 	inline static const int BASE_INTERVAL_MSEC()     { return 15000; }
 
-	//! 挙動をランダムに切り替える基本間隔への外乱
+	//! @brief The interval which gives flicker to base-interval
 	inline static const int RANDOM_INTERVAL_MSEC()   { return 10000; }
 
-	//! 自動で起き上がるまでの待機時間
+	//! @brief Wait time for getting up automatically
 	inline static const int GETUP_WAIT_MSEC()        { return 2000;  }
 
-	//! サンプリング間隔
+	//! @brief Sampling interval
 	inline static const int SAMPLING_INTERVAL_MSEC() { return 100;   }
 
-	//! 重力軸と判定するための閾値
+	//! @brief A threshold to decide gravity axis
 	inline static const int GRAVITY_AXIS_THRESHOLD() { return 13000; }
+
+	void m_preprocess();
+
 
 	unsigned long m_before_user_action_msec;
 	unsigned long m_next_sampling_msec;
@@ -56,34 +62,36 @@ private:
 
 	bool m_lying;
 
+	unsigned char m_log_count;
+
 	AccelerationGyroSensor* m_sensor_ptr;
 	MotionController*       m_motion_ctrl_ptr;
 
 public:
 	/*!
-		@brief コンストラクタ
+		@brief Constructor
 
-		@param [in, out] sensor      センサインスタンス
-		@param [in, out] motion_ctrl モーションコントローラインスタンス
+		@param [in, out] sensor      An instance of the sensor class.
+		@param [in, out] motion_ctrl An instance of the motion controller class.
 	*/
 	Soul(AccelerationGyroSensor& sensor, MotionController& motion_ctrl);
 
 	/*!
-		@brief PLEN2の状態の観測メソッド
+		@brief Log PLEN's state
 	*/
-	void logging();
+	void log();
 
 	/*!
-		@brief ユーザ操作を観測するメソッド
+		@brief Log a timing when a user action is input
 
-		このメソッドを、ユーザ操作を観測した全ての地点で実行してください。
+		Please run the method at the all timings when user action is input.
 	*/
 	void userActionInputed();
 
 	/*!
-		@brief 観測状態に基づいて、適切な挙動を適用するメソッド
+		@brief Apply appropriate motion based on logging state
 	*/
 	void action();
 };
 
-#endif // _PLEN2__SOUL_H_
+#endif // PLEN2_SOUL_H

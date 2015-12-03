@@ -1,12 +1,14 @@
 /*!
 	@file      AccelerationGyroSensor.h
-	@brief     加速度・ジャイロセンサの管理クラスを提供します。
+	@brief     Management class of acceleration and gyro sensor.
 	@author    Kazuyuki TAKASE
 	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
 
-#ifndef _PLEN2__ACCELERATION_GYRO_SENSOR_H_
-#define _PLEN2__ACCELERATION_GYRO_SENSOR_H_
+#pragma once
+
+#ifndef PLEN2_ACCELERATION_GYRO_SENSOR_H
+#define PLEN2_ACCELERATION_GYRO_SENSOR_H
 
 namespace PLEN2
 {
@@ -14,107 +16,104 @@ namespace PLEN2
 }
 
 /*!
-	@brief 加速度・ジャイロセンサの管理クラス
-
-	@note
-	加速度・ジャイロセンサの値は、頭基板からバスを介して取得する必要があります。
+	@brief Management class of acceleration and gyro sensor
 */
 class PLEN2::AccelerationGyroSensor
 {
-// macro:
-	#define _PLEN2__ACCELERATION_GYRO_SENSOR__SUM 6
-
 private:
-	//! @brief センサの総数
-	inline static const int SUM()
-	{
-		return _PLEN2__ACCELERATION_GYRO_SENSOR__SUM;
-	}
+	enum SENSOR_VALUE_MAP {
+		ACC_X,
+		ACC_Y,
+		ACC_Z,
+		GYRO_ROLL,
+		GYRO_PITCH,
+		GYRO_YAW,
+		SUM //!< Summation of sensors
+	};
 
-	int m_values[_PLEN2__ACCELERATION_GYRO_SENSOR__SUM];
+	int m_values[SUM];
 
 public:
 	/*!
-		@brief センサ値のサンプリングを行うメソッド
+		@brief Sampling sensor values
 
-		@note
-		loop() から定期的に呼び出すことを想定しています。
+		Usage assumption is to call the method at stated periods from loop().
 
 		@attention
-		バスを介してデータの送受信を行うため、内部で割り込みと通信待ちのロックが発生します。
-		そのため、コンストラクタ内や割り込みベクタ内での使用は推奨されません。
+		The method has a deadlock of interruption and communication wait
+		because it to communicate with the sensor through a bus,
+		so using in constructor and interruption vector is deprecated.
 		<br><br>
-		電力供給のタイミングやファームウェアの立上げタイミングが"サーボ基盤"→"頭基板"なため、
-		電源投入の早い段階で本メソッドを実行すると、通信タイミングがずれるためフリーズします。
-		(おおむね、3000[msec]の遅延をいれると大丈夫なようです。)
+		The order of power supplied or firmware startup timing is base-board, head-board.
+		If the method calls from early timing, program freezes because synchronism of communication is missed.
+		(Generally, it is going to success setup() inserts 3000[msec] delays.)
 	*/
 	void sampling();
 
 	/*!
-		@brief X軸の加速度を取得するメソッド
+		@brief Get X axis's acceleration
 
-		@return X軸の加速度
+		@return X axis's acceleration
 
 		@attention
-		取得される値は、sampling() 実行時の値をキャッシュしたものです。
+		Returning cached value at run the sampling method.
 	*/
 	const int& getAccX();
 
 	/*!
-		@brief Y軸の加速度を取得するメソッド
+		@brief Get Y axis's acceleration
 
-		@return Y軸の加速度
+		@return Y axis's acceleration
 
 		@attention
-		取得される値は、sampling() 実行時の値をキャッシュしたものです。
+		Returning cached value at run the sampling method.
 	*/
 	const int& getAccY();
 
 	/*!
-		@brief Z軸の加速度を取得するメソッド
+		@brief Get Z axis's acceleration
 
-		@return Z軸の加速度
+		@return Z axis's acceleration
 
 		@attention
-		取得される値は、sampling() 実行時の値をキャッシュしたものです。
+		Returning cached value at run the sampling method.
 	*/
 	const int& getAccZ();
 
 	/*!
-		@brief ロール軸(X軸に関する回転軸)の角速度を取得するメソッド
+		@brief Get roll (rotation axis on X axis) axis's angular velocity
 
-		@return ロール軸の角速度
+		@return Roll axis's angular velocity
 
 		@attention
-		取得される値は、sampling() 実行時の値をキャッシュしたものです。
+		Returning cached value at run the sampling method.
 	*/
 	const int& getGyroRoll();
 
 	/*!
-		@brief ピッチ軸(Y軸に関する回転軸)の角速度を取得するメソッド
+		@brief Get pitch (rotation axis on Y axis) axis's angular velocity
 
-		@return ピッチ軸の角速度
+		@return Pitch axis's angular velocity
 
 		@attention
-		取得される値は、sampling() 実行時の値をキャッシュしたものです。
+		Returning cached value at run the sampling method.
 	*/
 	const int& getGyroPitch();
 
 	/*!
-		@brief ヨー軸(Z軸に関する回転軸)の角速度を取得するメソッド
+		@brief Get yaw (rotation axis on Z axis) axis's angular velocity
 
-		@return ヨー軸の角速度
+		@return Yaw axis's angular velocity
 
 		@attention
-		取得される値は、sampling() 実行時の値をキャッシュしたものです。
+		Returning cached value at run the sampling method.
 	*/
 	const int& getGyroYaw();
 
 	/*!
-		@brief サンプリングを行った後、各種センサ値をダンプするメソッド
+		@brief Dump all sensor values after sampling
 
-		@note
-		以下のような書式のJSON文字列を出力します。
+		Outputs result like JSON format below.
 		@code
 		{
 			"Acc X": <integer>,
@@ -129,4 +128,4 @@ public:
 	void dump();
 };
 
-#endif // _PLEN2__ACCELERATION_GYRO_SENSOR_H_
+#endif // PLEN2_ACCELERATION_GYRO_SENSOR_H

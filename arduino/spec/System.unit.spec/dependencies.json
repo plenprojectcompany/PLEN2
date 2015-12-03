@@ -1,0 +1,8 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"Pin",
+		"System",
+		"Profiler"
+	]
+}

@@ -1,58 +1,59 @@
 /*!
 	@file      Pin.h
-	@brief     各デバイスの機能をArduinoのピンマッピングに即して、別名として提供します。
+	@brief     Management namespace of pin mapping.
 	@author    Kazuyuki TAKASE
 	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
 
-#ifndef _PLEN2__PIN_H_
-#define _PLEN2__PIN_H_
+#pragma once
+
+#ifndef PLEN2_PIN_H
+#define PLEN2_PIN_H
 
 namespace PLEN2
 {
 	/*!
-		@brief ピンマッピングの管理
-		
-		これらの関数の戻り値を、Arduino標準ライブラリのピン指定に渡して下さい。
-		なお、これらの関数は全てコンパイル時に静的に評価されるため、
-		実行時のオーバーヘッドは存在しません。
+		@brief Management namespace of pin mapping
+
+		Please give the standard Arduino libraries the methods returning values.
+		The methods are evaluated at compile time, so there is no overhead at runtime.
 
 		@note
-		PLEN2の回路図も併せてご参照ください。
-		→ https://github.com/plenproject/plen__baseboard
-		
+		It helps your understanding that to refer the PLEN2's circuit and schematic.
+		-> https://github.com/plenproject/plen__baseboard
+
 		@sa
-		Arduino Microのピンマッピング → http://arduino.cc/en/Hacking/PinMapping32u4
+		Arduino Micro's pin mapping -> http://arduino.cc/en/Hacking/PinMapping32u4
 	 */
 	namespace Pin
 	{
-		//! @brief マルチプレクサの出力選択，0ビット目
+		//! @brief Output selection bit of multiplexer (0bit)
 		inline static const int MULTIPLEXER_SELECT0() { return 5;  }
 
-		//! @brief マルチプレクサの出力選択，1ビット目
+		//! @brief Output selection bit of multiplexer (1bit)
 		inline static const int MULTIPLEXER_SELECT1() { return 6;  }
 
-		//! @brief マルチプレクサの出力選択，2ビット目
+		//! @brief Output selection bit of multiplexer (2bit)
 		inline static const int MULTIPLEXER_SELECT2() { return 12; }
 
-		//! @brief PWMの出力先，サーボモータ00～07番用
+		//! @brief Output of PWM, for servo 00 to 07
 		inline static const int PWM_OUT_00_07()       { return 11; }
 
-		//! @brief PWMの出力先，サーボモータ08～15番用
+		//! @brief Output of PWM, for servo 08 to 15
 		inline static const int PWM_OUT_08_15()       { return 10; }
 
-		//! @brief PWMの出力先，サーボモータ16～23番用
+		//! @brief Output of PWM, for servo 16 to 23
 		inline static const int PWM_OUT_16_23()       { return 9;  }
 
-		//! @brief シリアルの出力方向選択
+		//! @brief Data flow selection bit of serial
 		inline static const int RS485_TXD()           { return 4;  }
 
-		//! @brief LEDの出力先
+		//! @brief Output of LED
 		inline static const int LED_OUT()             { return 13; }
 
-		//! @brief ランダムデバイスの入力先
-		inline static const int RANDOM_DEVCIE_IN()    { return 6;  }
+		//! @brief Input of random-device (Get an open circuit voltage.)
+		inline static const int RANDOM_DEVICE_IN()    { return 6;  }
 	}
 }
 
-#endif // _PLEN2__PIN_H_
+#endif // PLEN2_PIN_H

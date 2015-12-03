@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sourcemonitor_commands>
+	<command>
+		<project_file>firmware.smproj</project_file>
+		<project_language>C++</project_language>
+		<modified_complexity>true</modified_complexity>
+		<source_directory>..\..\firmware</source_directory>
+		<file_extensions>*.h,*.cpp,*.ino</file_extensions>
+		<include_subdirectories>true</include_subdirectories>
+		<parse_utf8_files>true</parse_utf8_files>
+		<!-- <export>
+			<export_file>metrics.xml</export_file>
+			<export_type>1 (project summary as XML)</export_type>
+			<export_option>Include method metrics: option 3</export_option>
+		</export> -->
+	</command>
+</sourcemonitor_commands>

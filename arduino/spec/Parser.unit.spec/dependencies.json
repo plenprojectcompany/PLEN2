@@ -1,0 +1,6 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"Parser"
+	]
+}

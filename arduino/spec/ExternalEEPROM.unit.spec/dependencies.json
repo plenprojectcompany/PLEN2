@@ -1,0 +1,9 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"ExternalEEPROM",
+		"Pin",
+		"System",
+		"Profiler"
+	]
+}

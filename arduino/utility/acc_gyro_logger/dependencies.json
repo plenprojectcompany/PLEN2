@@ -1,0 +1,9 @@
+{
+	"root": "../../firmware/",
+	"import": [
+		"Pin",
+		"System",
+		"AccelerationGyroSensor",
+		"Profiler"
+	]
+}

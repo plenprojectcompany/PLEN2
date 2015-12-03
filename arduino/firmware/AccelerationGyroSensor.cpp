@@ -7,35 +7,31 @@
 	(See also : http://opensource.org/licenses/mit-license.php)
 */
 
-// Arduinoライブラリ
+#define DEBUG false
+
 #include "Arduino.h"
 
-// 独自ライブラリ
 #include "Pin.h"
 #include "System.h"
 #include "AccelerationGyroSensor.h"
 
-#define _DEBUG false
+#if DEBUG
+	#include "Profiler.h"
+#endif
 
+
+namespace Shared
+{
+	PLEN2::System system;
+}
 
 namespace
 {
-	PLEN2::System system;
-
-	enum {
-		ACC_X,
-		ACC_Y,
-		ACC_Z,
-		GYRO_ROLL,
-		GYRO_PITCH,
-		GYRO_YAW
-	};
-
 	template<typename T>
-	void endianCast(T& value)
+	void endian_cast(T& value)
 	{
 		char  temp;
-		char* filler = (char*)&value;
+		char* filler = reinterpret_cast<char*>(&value);
 
 		for (int index = 0; index < (sizeof(T) / 2); index++)
 		{
@@ -44,58 +40,65 @@ namespace
 			filler[index] = temp;
 		}
 	}
+
+	template<>
+	void endian_cast(int& value)
+	{
+		value = ((value & 0x00FF) << 8) | ((value >> 8) & 0x00FF);
+	}
 }
 
 void PLEN2::AccelerationGyroSensor::sampling()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::sampling()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::sampling()"));
 	#endif
 
 	/*!
 		@note
-		Pin::RS485_TXD()をHIGHにすることで、データの流れを"サーボ基盤"→"頭基板"と変更する。
-		頭基板のシリアルに任意のデータを送ると、2byte, ビッグエンディアンのバイト列で
-		各センサ値を返却してくる。
+		Convert data flow into "base-board -> head-board" by substituting HIGH for Pin::RS485_TXD().
+		If sending any data to head-board, sensor responds values formatting 2byte, big-endian.
 
-		これを受信するために、データの流れを即座に"頭基板"→"サーボ基盤"と変更する必要がある。
+		Just after sending data, must convert data flow into "head-board -> base-board"
+		by substituting LOW for Pin::RS485_TXD(), for receiving the values.
 	*/
 	digitalWrite(Pin::RS485_TXD(), HIGH);
-	system.BLESerial().write('<');
-	system.BLESerial().flush();
+	Shared::system.BLESerial().write('<');
+	Shared::system.BLESerial().flush();
 
 	digitalWrite(Pin::RS485_TXD(), LOW);
+
 	char  read_count = 0;
-	char* filler = (char*)m_values;
+	char* filler = reinterpret_cast<char*>(m_values);
 
 	while (true)
 	{
-		if (system.BLESerial().available())
+		if (Shared::system.BLESerial().available())
 		{
-			filler[read_count++] = system.BLESerial().read();
+			filler[read_count++] = Shared::system.BLESerial().read();
 		}
 
-		if (read_count == (SUM() * sizeof(int)))
+		if (read_count == (SUM * sizeof(int)))
 		{
-			// @attention '\n'の読み飛ばしのために必須
-			system.BLESerial().read();
+			// @attention For skipping to read '\n'.
+			Shared::system.BLESerial().read();
 
-			for (int index = 0; index < SUM(); index++)
+			for (int index = 0; index < SUM; index++)
 			{
-				endianCast(m_values[index]);
+				endian_cast(m_values[index]);
 			}
 
 			break;
 		}
 
-		delay(1); // @attention 最適化対策と割り込みの疑似均等割り付けのために必須
+		delay(1); // @attention A countermeasure of optimization.
 	}
 }
 
 const int& PLEN2::AccelerationGyroSensor::getAccX()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getAccX()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::getAccX()"));
 	#endif
 
 	return m_values[ACC_X];
@@ -103,8 +106,8 @@ const int& PLEN2::AccelerationGyroSensor::getAccX()
 
 const int& PLEN2::AccelerationGyroSensor::getAccY()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getAccY()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::getAccY()"));
 	#endif
 
 	return m_values[ACC_Y];
@@ -112,8 +115,8 @@ const int& PLEN2::AccelerationGyroSensor::getAccY()
 
 const int& PLEN2::AccelerationGyroSensor::getAccZ()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getAccZ()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::getAccZ()"));
 	#endif
 
 	return m_values[ACC_Z];
@@ -121,8 +124,8 @@ const int& PLEN2::AccelerationGyroSensor::getAccZ()
 
 const int& PLEN2::AccelerationGyroSensor::getGyroRoll()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getGyroRoll()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::getGyroRoll()"));
 	#endif
 
 	return m_values[GYRO_ROLL];
@@ -130,8 +133,8 @@ const int& PLEN2::AccelerationGyroSensor::getGyroRoll()
 
 const int& PLEN2::AccelerationGyroSensor::getGyroPitch()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getGyroPitch()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::getGyroPitch()"));
 	#endif
 
 	return m_values[GYRO_PITCH];
@@ -139,8 +142,8 @@ const int& PLEN2::AccelerationGyroSensor::getGyroPitch()
 
 const int& PLEN2::AccelerationGyroSensor::getGyroYaw()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::getGyroYaw()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::getGyroYaw()"));
 	#endif
 
 	return m_values[GYRO_YAW];
@@ -148,36 +151,36 @@ const int& PLEN2::AccelerationGyroSensor::getGyroYaw()
 
 void PLEN2::AccelerationGyroSensor::dump()
 {
-	#if _DEBUG
-		system.outputSerial().println(F("=== running in function : AccelerationGyroSensor::dump()"));
+	#if DEBUG
+		volatile Utility::Profiler p(F("AccelerationGyroSensor::dump()"));
 	#endif
 
 	sampling();
 
-	system.outputSerial().println(F("{"));
+	Shared::system.outputSerial().println(F("{"));
 
-		system.outputSerial().print(F("\t\"Acc X\": "));
-		system.outputSerial().print(getAccX());
-		system.outputSerial().println(F(","));
+	Shared::system.outputSerial().print(F("\t\"Acc X\": "));
+	Shared::system.outputSerial().print(getAccX());
+	Shared::system.outputSerial().println(F(","));
 
-		system.outputSerial().print(F("\t\"Acc Y\": "));
-		system.outputSerial().print(getAccY());
-		system.outputSerial().println(F(","));
+	Shared::system.outputSerial().print(F("\t\"Acc Y\": "));
+	Shared::system.outputSerial().print(getAccY());
+	Shared::system.outputSerial().println(F(","));
 
-		system.outputSerial().print(F("\t\"Acc Z\": "));
-		system.outputSerial().print(getAccZ());
-		system.outputSerial().println(F(","));
+	Shared::system.outputSerial().print(F("\t\"Acc Z\": "));
+	Shared::system.outputSerial().print(getAccZ());
+	Shared::system.outputSerial().println(F(","));
 
-		system.outputSerial().print(F("\t\"Gyro Roll\": "));
-		system.outputSerial().print(getGyroRoll());
-		system.outputSerial().println(F(","));
+	Shared::system.outputSerial().print(F("\t\"Gyro Roll\": "));
+	Shared::system.outputSerial().print(getGyroRoll());
+	Shared::system.outputSerial().println(F(","));
 
-		system.outputSerial().print(F("\t\"Gyro Pitch\": "));
-		system.outputSerial().print(getGyroPitch());
-		system.outputSerial().println(F(","));
+	Shared::system.outputSerial().print(F("\t\"Gyro Pitch\": "));
+	Shared::system.outputSerial().print(getGyroPitch());
+	Shared::system.outputSerial().println(F(","));
 
-		system.outputSerial().print(F("\t\"Gyro Yaw\": "));
-		system.outputSerial().println(getGyroYaw());
+	Shared::system.outputSerial().print(F("\t\"Gyro Yaw\": "));
+	Shared::system.outputSerial().println(getGyroYaw());
 
-	system.outputSerial().println(F("}"));
+	Shared::system.outputSerial().println(F("}"));
 }

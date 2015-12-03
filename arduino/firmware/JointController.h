@@ -1,12 +1,12 @@
 /*!
 	@file      JointController.h
-	@brief     関節の管理クラスを提供します。
+	@brief     Management class of joints.
 	@author    Kazuyuki TAKASE
 	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
 
-#ifndef _PLEN2__JOINT_CONTROLLER_H_
-#define _PLEN2__JOINT_CONTROLLER_H_
+#ifndef PLEN2_JOINT_CONTROLLER_H
+#define PLEN2_JOINT_CONTROLLER_H
 
 namespace PLEN2
 {
@@ -14,290 +14,257 @@ namespace PLEN2
 }
 
 /*!
-	@brief 関節の管理クラス
+	@brief Management class of joints
+
+	In Atmega32u4, one timer can output 3 PWM signals at a time.
+	The MCU can control 24 servos by connecting 3bit multiplexer in each signal output lines.
 
 	@note
-	Atmega32u4では、ひとつのタイマでPWM信号を最大3ラインまで出力可能です。
-	1ラインに8出力のマルチプレクサを接続することで、計24個までのサーボモータを制御可能です。
-	<br><br>
-	なお、PLEN1.4における各種PWM，角度の設定は以下の通りです。
+	There is information about PLEN1.4's configuration below.
 	@code
-	//! @brief パルス幅変調波の最小値
-	inline static const int PWM_MIN()       { return 492;  }
+	enum {
+		SUM = 24, //!< Summation of the servos controllable.
 
-	//! @brief パルス幅変調波の最大値
-	inline static const int PWM_MAX()       { return 816;  }
+		ANGLE_MIN     = -600, //!< Min angle of the servos.
+		ANGLE_MAX     =  600, //!< Max angle of the servos.
+		ANGLE_NEUTRAL =    0  //!< Neutral angle of the servos.
+	};
 
-	//! @brief パルス幅変調波の中間値
-	inline static const int PWM_NEUTRAL()   { return 654;  }
+	//! @brief PWM width that to make min angle
+	inline static const int PWM_MIN()     { return 492;  }
 
-	//! @brief 関節角度の最小値
-	inline static const int ANGLE_MIN()     { return -600; }
+	//! @brief PWM width that to make max angle
+	inline static const int PWM_MAX()     { return 816;  }
 
-	//! @brief 関節角度の最大値
-	inline static const int ANGLE_MAX()     { return 600;  }
-
-	//! @brief 関節角度の中間値
-	inline static const int ANGLE_NEUTRAL() { return 0;    }
+	//! @brief PWM width that to make neutral angle
+	inline static const int PWM_NEUTRAL() { return 654;  }
 	@endcode
 */
 class PLEN2::JointController
 {
-// macro:
-	#define _PLEN2__JOINTCONTROLLER__SUM 24
+public:
+	enum {
+		SUM = 24, //!< Summation of the servos controllable.
+
+		ANGLE_MIN     = -700, //!< Min angle of the servos.
+		ANGLE_MAX     =  700, //!< Max angle of the servos.
+		ANGLE_NEUTRAL =    0  //!< Neutral angle of the servos.
+	};
 
 private:
-	//! @brief 初期化フラグの保持アドレス
-	inline static const int FLAG_ADDRESS()           { return 0; }
-	
-	//! @brief 初期化フラグの値
-	inline static const int FLAG_VALUE()             { return 2; }
-	
-	//! @brief 関節設定の保持アドレス
-	inline static const int SETTINGS_BEGIN_ADDRESS() { return 1; }
+	//! @brief Initialized flag's address on internal EEPROM
+	inline static const int INIT_FLAG_ADDRESS()     { return 0; }
+
+	//! @brief Initialized flag's value
+	inline static const int INIT_FLAG_VALUE()       { return 2; }
+
+	//! @brief Head-address of joint settings on internal EEPROM
+	inline static const int SETTINGS_HEAD_ADDRESS() { return 1; }
 
 	/*!
-		@brief 関節設定の管理クラス
+		@brief Management class of joint setting
 	*/
 	class JointSetting
 	{
 	public:
-		int MIN;  //!< 関節角度最小値の設定
-		int MAX;  //!< 関節角度最大値の設定
-		int HOME; //!< 関節角度初期値の設定
+		int MIN;  //!< Setting about min angle.
+		int MAX;  //!< Setting about max angle.
+		int HOME; //!< Setting about home angle.
 
 		/*!
-			@brief コンストラクタ
+			@brief Constructor
 		*/
 		JointSetting()
-			: MIN(ANGLE_MIN())
-			, MAX(ANGLE_MAX())
-			, HOME(ANGLE_NEUTRAL())
-		{
-			// noop.
-		}
-
-		/*!
-			@brief コンストラクタ
-
-			@param [in] min  関節角度最小値
-			@param [in] max  関節角度最大値
-			@param [in] home 関節角度初期値
-		*/
-		JointSetting(int min, int max, int home)
-			: MIN(min)
-			, MAX(max)
-			, HOME(home)
+			: MIN(ANGLE_MIN)
+			, MAX(ANGLE_MAX)
+			, HOME(ANGLE_NEUTRAL)
 		{
 			// noop.
 		}
 	};
 
-	JointSetting m_SETTINGS_INITIAL[_PLEN2__JOINTCONTROLLER__SUM];
-	JointSetting m_SETTINGS[_PLEN2__JOINTCONTROLLER__SUM];
+	JointSetting m_SETTINGS[SUM];
 
 public:
 	/*!
-		@brief マルチプレクサの仕様の管理
+		@brief Management class (as namespace) of multiplexer
 
 		@note
-		以下のメソッドは、本来はclass名に対応したnamespace内に実装されるべきですが、
-		C++の仕様ではそのような構文が許容されないため、class内に実装されています。
+		The methods the class has are more accurate that there are in the namespace named Multiplexer,
+		but C++'s idiom doesn't accept syntax that described before.
 	*/
 	class Multiplexer {
 	public:
-		//! @brief マルチプレクサの実装個数
-		inline static const int SUM()            { return 3; }
-		
-		//! @brief 1つのマルチプレクサで制御可能な信号線数
-		inline static const int SELECTABLE_NUM() { return 8; }
+		//! @brief Summation of multiplexers
+		inline static const int SUM()              { return 3; }
+
+		//! @brief Number of controllable lines by a multiplexer
+		inline static const int SELECTABLE_LINES() { return 8; }
 	};
-	
-	//! @brief パルス幅変調波の最小値
-	inline static const int PWM_MIN()       { return 480;  }
 
-	//! @brief パルス幅変調波の最大値
-	inline static const int PWM_MAX()       { return 820;  }
+	//! @brief PWM width that to make min angle
+	inline static const int PWM_MIN()     { return 480;  }
 
-	//! @brief パルス幅変調波の中間値
-	inline static const int PWM_NEUTRAL()   { return 650;  }
+	//! @brief PWM width that to make max angle
+	inline static const int PWM_MAX()     { return 820;  }
 
-	//! @brief 関節角度の最小値
-	inline static const int ANGLE_MIN()     { return -700; }
-
-	//! @brief 関節角度の最大値
-	inline static const int ANGLE_MAX()     { return 700;  }
-
-	//! @brief 関節角度の中間値
-	inline static const int ANGLE_NEUTRAL() { return 0;    }
-
-	//! @brief 関節の実装個数
-	inline static const int SUM() { return _PLEN2__JOINTCONTROLLER__SUM; }
+	//! @brief PWM width that to make neutral angle
+	inline static const int PWM_NEUTRAL() { return 650;  }
 
 	/*!
-		@brief タイマ1 オーバーフロー割り込みベクタ，呼び出し回数
+		@brief Finished flag of PWM output procedure 1 cycle
 
 		@attention
-		本来はprivateにされるべき変数です。タイマ1 オーバーフロー割り込みベクタから
-		参照するためにpublicにされているので、基本的に外部からはこの変数を参照しないでください。
-	*/
-	volatile static unsigned char m_overflow_count;
-
-	/*!
-		@brief PWM出力処理，1サイクルの終了判定変数
-
-		@attention
-		本来はprivateにされるべき変数です。タイマ1 オーバーフロー割り込みベクタから
-		参照するためにpublicにされているので、基本的に外部からはこの変数を参照しないでください。
+		The instance should be a private member normally.
+		It is a public member because it is only way to access from Timer 1 overflow interruption vector,
+		so you must not access it from other functions basically.
 	*/
 	volatile static bool m_1cycle_finished;
 
 	/*!
-		@brief パルス幅変調波，出力用配列
+		@brief PWM buffer
 
 		@attention
-		本来はprivateにされるべき変数です。タイマ1 オーバーフロー割り込みベクタから
-		参照するためにpublicにされているので、基本的に外部からはこの変数を参照しないでください。
+		The instance should be a private member normally.
+		It is a public member because it is only way to access from Timer 1 overflow interruption vector,
+		so you must not access it from other functions basically.
 	*/
-	static unsigned int m_pwms[_PLEN2__JOINTCONTROLLER__SUM];
+	static unsigned int m_pwms[SUM];
 
 	/*!
-		@brief コンストラクタ
+		@brief Constructor
 	*/
 	JointController();
 
 	/*!
-		@brief 関節設定の読み込みメソッド
+		@brief Load the joint settings
 
-		Atmega32u4の内部EEPROMから、関節設定を読み出します。
-		内部EEPROM内に値が存在しない場合は、デフォルトの値を書き込みます。
+		The method reads joint settings from internal EEPROM.
+		If the EEPROM has no settings, the method also writes the default values.
+
+		@sa
+		JointController.cpp::Shared::m_SETTINGS_INITIAL
 
 		@attention
-		本来はコンストラクタ内で呼び出すべき処理ですが、
-		AVR MCUではコンストラクタ内で割り込みが発生した際、プログラムが強制的に停止します。
-		<br><br>
-		本メソッドは、内部でシリアル通信と内部EEPROMへの読み書きを行うため、
-		その際に割り込みが発生します。そのため、コンストラクタ内には本メソッドを記述できません。
+		The method should call in constructor normally,
+		but initialized timing of any interruption is indefinite, so might get deadlock.
+		(The method uses serial communication and internal EEPROM accessing, so it happens interruption.)
 	*/
 	void loadSettings();
 
 	/*!
-		@brief 関節設定の初期化メソッド
+		@brief Reset the joint settings
 
-		内部EEPROM内に、デフォルトの関節設定を書き込みます。
+		Write default settings to internal EEPROM.
 	*/
 	void resetSettings();
 
 	/*!
-		@brief 指定した関節の角度最小値を取得するメソッド
+		@brief Get min angle of the joint given
 
-		@param [in] joint_id 角度最小値を取得したい関節を番号で指定します。
+		@param [in] joint_id Please set joint id you want to get min angle.
 
-		@return 関節角度最小値
-		@retval -32768 **joint_id**が不正
+		@return Reference of min angle a joint expressed by **joint_id** has.
+		@retval -32768 Argument error. (**joint_id** is invalid.)
 	*/
-	int getMinAngle(unsigned char joint_id);
-	
-	/*!
-		@brief 指定した関節の角度最大値を取得するメソッド
-
-		@param [in] joint_id 角度最大値を取得したい関節を番号で指定します。
-
-		@return 関節角度最大値
-		@retval -32768 **joint_id**が不正
-	*/
-	int getMaxAngle(unsigned char joint_id);
-	
-	/*!
-		@brief 指定した関節の角度初期値を取得するメソッド
-
-		@param [in] joint_id 角度初期値を取得したい関節を番号で指定します。
-
-		@return 関節角度初期値
-		@retval -32768 **joint_id**が不正
-	*/
-	int getHomeAngle(unsigned char joint_id);
+	const int& getMinAngle(unsigned char joint_id);
 
 	/*!
-		@brief 指定した関節の角度最小値を、指定した値に設定するメソッド
+		@brief Get max angle of the joint given
 
-		@param [in] joint_id 角度最小値を設定したい関節を番号で指定します。
-		@param [in] angle    角度を分解能1/10°単位で指定します。
+		@param [in] joint_id Please set joint id you want to get max angle.
 
-		@return 実行結果
+		@return Reference of max angle a joint expressed by **joint_id** has.
+		@retval -32768 Argument error. (**joint_id** is invalid.)
+	*/
+	const int& getMaxAngle(unsigned char joint_id);
+
+	/*!
+		@brief Get home angle of the joint given
+
+		@param [in] joint_id Please set joint id you want to get home angle.
+
+		@return Reference of home angle a joint expressed by **joint_id** has.
+		@retval -32768 Argument error. (**joint_id** is invalid.)
+	*/
+	const int& getHomeAngle(unsigned char joint_id);
+
+	/*!
+		@brief Set min angle of the joint given
+
+		@param [in] joint_id Please set joint id you want to define min angle.
+		@param [in] angle    Please set angle that has steps of degree 1/10.
+
+		@return Result
 	*/
 	bool setMinAngle(unsigned char joint_id, int angle);
 
 	/*!
-		@brief 指定した関節の角度最大値を、指定した値に設定するメソッド
+		@brief Set max angle of the joint given
 
-		@param [in] joint_id 角度最大値を設定したい関節を番号で指定します。
-		@param [in] angle    角度を分解能1/10°単位で指定します。
+		@param [in] joint_id Please set joint id you want to define max angle.
+		@param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@return 実行結果
+		@return Result
 	*/
 	bool setMaxAngle(unsigned char joint_id, int angle);
 
 	/*!
-		@brief 指定した関節の角度初期値を、指定した値に設定するメソッド
+		@brief Set home angle of the joint given
 
-		@param [in] joint_id 角度初期値を設定したい関節を番号で指定します。
-		@param [in] angle    角度を分解能1/10°単位で指定します。
+		@param [in] joint_id Please set joint id you want to define home angle.
+		@param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@return 実行結果
+		@return Result
 	*/
 	bool setHomeAngle(unsigned char joint_id, int angle);
 
 	/*!
-		@brief 指定した関節の角度を、指定した値に設定するメソッド
+		@brief Set angle of the joint given
 
-		@param [in] joint_id 角度を設定したい関節を番号で指定します。
-		@param [in] angle    角度を分解能1/10°単位で指定します。
+		@param [in] joint_id Please set joint id you want to set angle.
+		@param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@return 実行結果
+		@return Result
 
 		@attention
-		必ずしも、**angle**の値がそのまま設定されるわけではありません。
-		ユーザが指定した関節角度の最大・最小値、およびサーボモータ自体の可動範囲内に丸めた後、
-		その値を設定します。単体テストの際にはそれを考慮して、テストを記述する必要があります。
+		<b>angle</b> might not be setting actually.
+		It is setting after trimming by user defined min-max value or servo's range,
+		so please consider it when writing a unit test.
 	*/
 	bool setAngle(unsigned char joint_id, int angle);
 
 	/*!
-		@brief 指定した関節の角度を、指定した値 + その関節における初期角度に設定するメソッド
+		@brief Set angle to "angle-diff + home-angle" of the joint given
 
-		@param [in] joint_id   角度を設定したい関節を番号で指定します。
-		@param [in] angle_diff 角度差分を分解能1/10°単位で指定します。
+		@param [in] joint_id   Please set joint id you want to set angle-diff.
+		@param [in] angle_diff Please set angle-diff that has steps of degree 1/10.
 
-		@return 実行結果
+		@return Result
 
 		@attention
-		必ずしも、**angle**の値が意図したように設定されるわけではありません。
-		ユーザが指定した関節角度の最大・最小値、およびサーボモータ自体の可動範囲内に丸めた後、
-		その値を設定します。単体テストの際にはそれを考慮して、テストを記述する必要があります。
+		<b>angle_diff</b> might not be setting actually.
+		It is setting after trimming by user defined min-max value or servo's range,
+		so please consider it when writing a unit test.
 	*/
 	bool setAngleDiff(unsigned char joint_id, int angle_diff);
 
 	/*!
-		@brief 関節設定のダンプメソッド
+		@brief Dump the joint settings
 
-		@note
-		以下のような書式のJSON文字列を出力します。
+		Output result like JSON format below.
 		@code
-		{
-			"settings": [
-				{
-					"joint": <integer>,
-					"MAX": <integer>,
-					"MIN": <integer>,
-					"HOME": <integer>
-				},
-				...
-			]
-		}
+		[
+			{
+				"max": <integer>,
+				"min": <integer>,
+				"home": <integer>
+			},
+			...
+		]
 		@endcode
 	*/
 	void dump();
 };
 
-#endif // _PLEN2__JOINT_CONTROLLER_H_
+#endif // PLEN2_JOINT_CONTROLLER_H
