@@ -3,8 +3,8 @@ PLEN2
 
 The world's first printable open-source humanoid.
 
-Getting Started
----------------
+
+## Getting Started
 1. Download this repository.
 2. Get control boards and servo motors. [Buy all!](http://plen.jp/shop/)
 3. Install firmware. (This is placed "/arduino/firmware/" directory.)
@@ -16,21 +16,65 @@ Getting Started
    [mac](https://github.com/plenproject/plen__motion_installer_gui_mac/releases)).)
 7. Hello, world where PLEN is!
 
-Enjoy More, with PLEN :)
-------------------------
+
+## Enjoy More, with PLEN :)
 - Let moving PLEN as you like! [Check it out.](http://plen.jp/playground/motion-editor/)
 - Learn about creativity thinking, structuring logics, or programing. [Check it out.](http://plen.jp/playground/scenography/)
 - Communicate other users. [Check it out.](https://plen.jp/playground/forum/)
+- Get more details of PLEN. [Check it out.](http://plen.jp/playground/wiki/)
 - etc...
 
-Laws of PLEN
-------------
+
+## Development Repositories
+### Solid Works
+SolidWorks is used for to build [mechanism elements](https://github.com/plenproject/plen__3DModel_for_SolidWorks).
+
+- Body
+- Foot
+- Hand
+- Neck
+- Servo bracket
+- Servo horn
+
+### Blender
+Blender is used for to build [high design quality parts](https://github.com/plenproject/plen__3DModel_for_Blender).
+In the future, all parts will be implemented by SolidWorks.
+
+- 3D Model (the whole body)
+- Face (head and barb)
+- Chest
+
+### Arduino
+We define here as the default repository of the firmware,
+and it's already installed on a baseboard.
+
+If you are interested deeply in the firmware, please check
+[a development repository (branch) the manager have](https://github.com/Guvalif/plen__firmware_for_Arduino/tree/v1.x).
+
+### Android
+- [Controller and visual programming language](https://github.com/plenproject/plen__Scenography_for_Android)
+
+### Web Application
+- [Motion editor](https://github.com/plenproject/plen__motion_editor_for_web)
+- [Control server](https://github.com/plenproject/plen__control_server), A communication tool between HTTP and Serial
+
+### Eagle
+> EAGLE PCB Design Software is the tool of choice for thousands of engineers worldwide.
+> With 3 modules and a common interface, EAGLE offers a variety of product combinations
+> and allows every user to choose the configuration that meets their individual requirements.
+> (origin: http://www.cadsoftusa.com/)
+
+- Printed circuit board CAD for [base-board](https://github.com/plenproject/plen__baseboard)
+- Printed circuit board CAD for [head-board](https://github.com/plenproject/plen__headboard)
+
+
+## Laws of PLEN
 You could use PLEN for every imaginable things, but please observe the following laws strictly.
 
 1. PLEN must not fight.
 2. PLEN must not give someone a feeling of discomfort.
 3. PLEN must be able to inherit its characteristics.
 
-Copyright
----------
+
+## Copyright
 - [PLEN Project Company Ltd.](http://plen.jp/), and all contributors.
