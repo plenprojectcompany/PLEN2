@@ -1,4 +1,4 @@
-PLEN2
+PLEN2 | PLEN Project Company
 ================================================================================
 
 The world's first printable open-source humanoid.
@@ -8,12 +8,16 @@ The world's first printable open-source humanoid.
 1. Download this repository.
 2. Get control boards and servo motors. [Buy all!](http://plen.jp/shop/)
 3. Install firmware. (This is placed "/arduino/firmware/" directory.)
+   [See also...](http://plen.jp/playground/wiki/tutorials/plen2/firmware)
 4. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
+   [See also...](http://plen.jp/playground/wiki/tutorials/index.html)
 5. Configure home positions of joints. (This step is done by using
    [PLENUtilities](https://github.com/plenproject/plen__control_server/releases).)
+   [See also...](http://plen.jp/playground/wiki/tutorials/plen2/tune)
 6. Write all motions. (Please check "/motion/*/" directory and use MotionInstaller
    ([win](https://github.com/plenproject/plen__motion_installer_gui_win/releases) or
    [mac](https://github.com/plenproject/plen__motion_installer_gui_mac/releases)).)
+   [See also...](http://plen.jp/playground/wiki/tutorials/motion_installer/simple_usage)
 7. Hello, world where PLEN is!
 
 
@@ -49,7 +53,7 @@ We define here as the default repository of the firmware,
 and it's already installed on a baseboard.
 
 If you are interested deeply in the firmware, please check
-[a development repository (branch) the manager have](https://github.com/Guvalif/plen__firmware_for_Arduino/tree/v1.x).
+[a development repository (branch) the manager has](https://github.com/Guvalif/plen__firmware_for_Arduino/tree/v1.x).
 
 ### Android
 - [Controller and visual programming language](https://github.com/plenproject/plen__Scenography_for_Android)
@@ -77,4 +81,4 @@ You could use PLEN for every imaginable things, but please observe the following
 
 
 ## Copyright
-- [PLEN Project Company Ltd.](http://plen.jp/), and all contributors.
+- [PLEN Project Company](https://plen.jp/), and all contributors.
