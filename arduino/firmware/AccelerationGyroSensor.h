@@ -35,7 +35,7 @@ private:
 
 public:
 	/*!
-		@brief Sampling sensor values
+		@brief Do sampling sensor values
 
 		Usage assumption is to call the method at stated periods from loop().
 
@@ -56,7 +56,7 @@ public:
 		@return X axis's acceleration
 
 		@attention
-		Returning cached value at run the sampling method.
+		Return cached value at run the sampling method.
 	*/
 	const int& getAccX();
 
@@ -66,7 +66,7 @@ public:
 		@return Y axis's acceleration
 
 		@attention
-		Returning cached value at run the sampling method.
+		Return cached value at run the sampling method.
 	*/
 	const int& getAccY();
 
@@ -76,7 +76,7 @@ public:
 		@return Z axis's acceleration
 
 		@attention
-		Returning cached value at run the sampling method.
+		Return cached value at run the sampling method.
 	*/
 	const int& getAccZ();
 
@@ -86,7 +86,7 @@ public:
 		@return Roll axis's angular velocity
 
 		@attention
-		Returning cached value at run the sampling method.
+		Return cached value at run the sampling method.
 	*/
 	const int& getGyroRoll();
 
@@ -96,7 +96,7 @@ public:
 		@return Pitch axis's angular velocity
 
 		@attention
-		Returning cached value at run the sampling method.
+		Return cached value at run the sampling method.
 	*/
 	const int& getGyroPitch();
 
@@ -106,7 +106,7 @@ public:
 		@return Yaw axis's angular velocity
 
 		@attention
-		Returning cached value at run the sampling method.
+		Return cached value at run the sampling method.
 	*/
 	const int& getGyroYaw();
 

@@ -1,7 +1,7 @@
 /*
 	Copyright (c) 2015,
 	- Kazuyuki TAKASE - https://github.com/Guvalif
-	- PLEN Project Company Ltd. - http://plen.jp
+	- PLEN Project Company Inc. - https://plen.jp
 
 	This software is released under the MIT License.
 	(See also : http://opensource.org/licenses/mit-license.php)
@@ -48,27 +48,27 @@ namespace
 
 		PROGMEM const int m_SETTINGS_INITIAL[] =
 		{
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,    0, // [01] Left : Shoulder Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  150, // [02] Left : Thigh Yaw
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  350, // [03] Left : Shoulder Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  -40, // [01] Left : Shoulder Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  245, // [02] Left : Thigh Yaw
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  470, // [03] Left : Shoulder Roll
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -100, // [04] Left : Elbow Roll
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -100, // [05] Left : Thigh Roll
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  -50, // [06] Left : Thigh Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  500, // [07] Left : Knee Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  300, // [08] Left : Foot Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  -50, // [09] Left : Foot Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -205, // [05] Left : Thigh Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,   50, // [06] Left : Thigh Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  445, // [07] Left : Knee Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  245, // [08] Left : Foot Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  -75, // [09] Left : Foot Roll
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, JointController::ANGLE_NEUTRAL,
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, JointController::ANGLE_NEUTRAL,
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, JointController::ANGLE_NEUTRAL,
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,    0, // [10] Right : Shoulder Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -150, // [11] Right : Thigh Yaw
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -350, // [12] Right : Shoulder Roll
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  100, // [13] Right : Elbow Roll
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  100, // [14] Right : Thigh Roll
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,   50, // [15] Right : Thigh Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -500, // [16] Right : Knee Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -300, // [17] Right : Foot Pitch
-			JointController::ANGLE_MIN, JointController::ANGLE_MAX,   50, // [18] Right : Foot Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,   15, // [10] Right : Shoulder Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  -70, // [11] Right : Thigh Yaw
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -390, // [12] Right : Shoulder Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  250, // [13] Right : Elbow Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,  195, // [14] Right : Thigh Roll
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -105, // [15] Right : Thigh Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -510, // [16] Right : Knee Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX, -305, // [17] Right : Foot Pitch
+			JointController::ANGLE_MIN, JointController::ANGLE_MAX,   60, // [18] Right : Foot Roll
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, JointController::ANGLE_NEUTRAL,
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, JointController::ANGLE_NEUTRAL,
 			JointController::ANGLE_MIN, JointController::ANGLE_MAX, JointController::ANGLE_NEUTRAL
@@ -508,7 +508,7 @@ void PLEN2::JointController::dump()
 	In the firmware, 16[MHz] clock source is prescaled by 64, and using 10bit mode,
 	so interruption interval is (16,000,000 / (64 * 1,024))^-1 * 1,000 = 4.096[msec].
 
-	The value is too smaller than servo's PWM acceptable interval, 
+	The value is too smaller than servo's PWM acceptable interval,
 	so the firmware can control 24 servos by outputting PWM once in 8 times
 	and changing output line at each interruption timing.
 

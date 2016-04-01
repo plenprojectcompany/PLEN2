@@ -1,7 +1,7 @@
 /*
 	Copyright (c) 2015,
 	- Kazuyuki TAKASE - https://github.com/Guvalif
-	- PLEN Project Company Ltd. - http://plen.jp
+	- PLEN Project Company Inc. - https://plen.jp
 
 	This software is released under the MIT License.
 	(See also : http://opensource.org/licenses/mit-license.php)
@@ -525,7 +525,7 @@ void setup()
 		while (!Serial);
 
 		PLEN2::System::outputSerial().println(
-			F("Hello, I am PLEN2 ! My system is up and running ver.1.3.0, Let me walk :)")
+			F("Hello, I am PLEN2! My system is up and running ver.1.3.1, Let me walk :)")
 		);
 	#endif
 }

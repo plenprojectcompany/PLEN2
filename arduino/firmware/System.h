@@ -33,7 +33,7 @@ private:
 	inline static const __FlashStringHelper* CODENAME() { return F("Cytisus"); }
 
 	//! @brief Version number of the firmware
-	inline static const __FlashStringHelper* VERSION()  { return F("1.3.0");   }
+	inline static const __FlashStringHelper* VERSION()  { return F("1.3.1");   }
 
 	//! @brief Communication speed of USB serial
 	inline static const long USBSERIAL_BAUDRATE() { return 2000000L; }

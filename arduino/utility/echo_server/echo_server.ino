@@ -1,27 +1,24 @@
-#include "Arduino.h"
+#include <Arduino.h>
+
 #include "System.h"
-
-
-namespace
-{
-	PLEN2::System system;
-}
 
 
 void setup()
 {
-	// noop.
+	volatile PLEN2::System s;
 }
 
 void loop()
 {
-	if (system.USBSerial().available())
+	using namespace PLEN2;
+
+	if (System::USBSerial().available())
 	{
-		system.USBSerial().write(system.USBSerial().read());
+		System::USBSerial().write(System::USBSerial().read());
 	}
 
-	if (system.BLESerial().available())
+	if (System::BLESerial().available())
 	{
-		system.USBSerial().write(system.BLESerial().read());
+		System::USBSerial().write(System::BLESerial().read());
 	}
 }

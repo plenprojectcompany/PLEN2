@@ -12,6 +12,10 @@ void setup()
 	Serial.print(sizeof(int));
 	Serial.println(F(" byte"));
 
+	Serial.print(F("bool  : "));
+	Serial.print(sizeof(bool));
+	Serial.println(F(" byte"));
+
 	Serial.print(F("short : "));
 	Serial.print(sizeof(short));
 	Serial.println(F(" byte"));

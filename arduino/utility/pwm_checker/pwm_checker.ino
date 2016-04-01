@@ -1,4 +1,4 @@
-#include "Arduino.h"
+#include <Arduino.h>
 #include <EEPROM.h>
 
 #include "System.h"
@@ -7,7 +7,6 @@
 
 namespace
 {
-	PLEN2::System          system;
 	PLEN2::JointController joint_ctrl;
 
 	unsigned int pwm = 512;
@@ -16,15 +15,18 @@ namespace
 
 void setup()
 {
+	volatile PLEN2::System s;
+
 	joint_ctrl.loadSettings();
-	// joint_ctrl.resetSettings();
 }
 
 void loop()
 {
-	if (system.USBSerial().available())
+	using namespace PLEN2;
+
+	if (System::USBSerial().available())
 	{
-		switch (system.USBSerial().read())
+		switch (System::USBSerial().read())
 		{
 			case 'm':
 			{
@@ -54,11 +56,11 @@ void loop()
 			}
 		}
 
-		system.USBSerial().print(F("output : "));
-		system.USBSerial().print(1023 - pwm);
-		system.USBSerial().print(F(" (internal = "));
-		system.USBSerial().print(pwm);
-		system.USBSerial().println(F(")"));
+		System::USBSerial().print(F("output : "));
+		System::USBSerial().print(1023 - pwm);
+		System::USBSerial().print(F(" (internal = "));
+		System::USBSerial().print(pwm);
+		System::USBSerial().println(F(")"));
 
 		joint_ctrl.m_pwms[0] = pwm;
 	}

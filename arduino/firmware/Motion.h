@@ -78,12 +78,22 @@ public:
 	unsigned char use_jump     : 1;  //!< Selector for to enable "jump".
 	unsigned char use_loop     : 1;  //!< Selector for to enable "loop".
 
-	unsigned char loop_begin   : 4;  //!< Frame number of loop's beginning.
-	unsigned char loop_end     : 4;  //!< Frame number of loop's ending.
+	unsigned char loop_begin;        //!< Frame number of loop's beginning.
+	unsigned char loop_end;          //!< Frame number of loop's ending.
 
 	unsigned char loop_count;        //!< Loop count. (Using 255 as infinity.)
 	unsigned char jump_slot;         //!< Slot number that is used for jumpping when play the motion finished.
-	unsigned char stop_flags[3];     //!< Array of stop flags.
+
+	/*!
+		@brief Array of stop flags
+
+		@todo
+		Currently, the definition is uint8_t 2 bytes array,
+		but in the future, it should be uint32_t variable.
+		<br><br>
+		Thus, the authors need to refactor I2C libraries.
+	*/
+	unsigned char stop_flags[2];
 };
 
 

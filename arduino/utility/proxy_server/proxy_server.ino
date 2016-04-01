@@ -1,24 +1,22 @@
-#include "Arduino.h"
+#include <Arduino.h>
 
 #include "Pin.h"
 #include "System.h"
 
 
-namespace
-{
-	PLEN2::System system;
-}
-
-
 void setup()
 {
+	volatile PLEN2::System s;
+
 	digitalWrite(PLEN2::Pin::RS485_TXD(), HIGH);
 }
 
 void loop()
 {
-	if (system.USBSerial().available())
+	using namespace PLEN2;
+
+	if (System::USBSerial().available())
 	{
-		system.BLESerial().write(system.USBSerial().read());
+		System::BLESerial().write(System::USBSerial().read());
 	}
 }

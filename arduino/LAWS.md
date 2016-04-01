@@ -1,8 +1,8 @@
 Laws of PLEN
-============
+===============================================================================
 
 ## English
-You could use PLEN for every imaginable things, but, in that case, please observe the following laws strictly.
+You could use PLEN for every imaginable things, but please observe the following laws strictly.
 
 1. PLEN must not fight.
 2. PLEN must not give someone a feeling of discomfort.

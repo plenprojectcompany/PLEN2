@@ -2,6 +2,7 @@
 
 
 #include <ArduinoUnit.h>
+#include "System.h"
 #include "AccelerationGyroSensor.h"
 
 
@@ -195,6 +196,8 @@ test(Dump)
 */
 void setup()
 {
+	volatile PLEN2::System system;
+
 	delay(3000);
 
 	while (!Serial); // for the Arduino Leonardo/Micro only.

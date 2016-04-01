@@ -1,5 +1,7 @@
+#include <Arduino.h>
+
+#include "System.h"
 #include "AccelerationGyroSensor.h"
-#include "Profiler.h"
 
 
 namespace
@@ -10,18 +12,17 @@ namespace
 
 void setup()
 {
+	volatile PLEN2::System s;
+
 	while (!Serial);
 
-	delay(3000); //!< @attention BLEチップのファームウェア起動を待つ。
+	delay(3000); //!< @attention A wait for starting up BLE MCU's firmware
 }
 
 void loop()
 {
-	{
-		volatile Utility::Profiler p(F("AccelerationGyroSensor::sampling()"));
-
-		acc_gyro.sampling();
-	}
-
+	acc_gyro.sampling();
 	acc_gyro.dump();
+
+	delay(500);
 }

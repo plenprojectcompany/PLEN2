@@ -3,7 +3,7 @@
 	"import": [
 		"ExternalEEPROM",
 		"JointController",
-		"MotionController",
+		"Motion",
 		"Pin",
 		"System"
 	]

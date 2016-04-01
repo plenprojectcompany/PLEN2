@@ -3,7 +3,6 @@
 	"import": [
 		"Pin",
 		"System",
-		"AccelerationGyroSensor",
-		"Profiler"
+		"AccelerationGyroSensor"
 	]
 }

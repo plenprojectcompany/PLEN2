@@ -1,7 +1,7 @@
 /*
 	Copyright (c) 2015,
 	- Kazuyuki TAKASE - https://github.com/Guvalif
-	- PLEN Project Company Ltd. - http://plen.jp
+	- PLEN Project Company Inc. - https://plen.jp
 
 	This software is released under the MIT License.
 	(See also : http://opensource.org/licenses/mit-license.php)
@@ -19,11 +19,6 @@
 	#include "Profiler.h"
 #endif
 
-
-namespace Shared
-{
-	PLEN2::System system;
-}
 
 namespace
 {
@@ -56,15 +51,15 @@ void PLEN2::AccelerationGyroSensor::sampling()
 
 	/*!
 		@note
-		Convert data flow into "base-board -> head-board" by substituting HIGH for Pin::RS485_TXD().
-		If sending any data to head-board, sensor responds values formatting 2byte, big-endian.
+		Firstly, occupy the right of sending data (data flow is "base-board -> head-board") by substituting HIGH for Pin::RS485_TXD().
+		If sending any data to head-board, the sensor responds values formatting 2byte, big-endian.
 
-		Just after sending data, must convert data flow into "head-board -> base-board"
+		Just after sending any data, must give up the right of sending data (data flow is "head-board -> base-board")
 		by substituting LOW for Pin::RS485_TXD(), for receiving the values.
 	*/
 	digitalWrite(Pin::RS485_TXD(), HIGH);
-	Shared::system.BLESerial().write('<');
-	Shared::system.BLESerial().flush();
+	System::BLESerial().write('<');
+	System::BLESerial().flush();
 
 	digitalWrite(Pin::RS485_TXD(), LOW);
 
@@ -73,15 +68,15 @@ void PLEN2::AccelerationGyroSensor::sampling()
 
 	while (true)
 	{
-		if (Shared::system.BLESerial().available())
+		if (System::BLESerial().available())
 		{
-			filler[read_count++] = Shared::system.BLESerial().read();
+			filler[read_count++] = System::BLESerial().read();
 		}
 
 		if (read_count == (SUM * sizeof(int)))
 		{
 			// @attention For skipping to read '\n'.
-			Shared::system.BLESerial().read();
+			System::BLESerial().read();
 
 			for (int index = 0; index < SUM; index++)
 			{
@@ -157,30 +152,30 @@ void PLEN2::AccelerationGyroSensor::dump()
 
 	sampling();
 
-	Shared::system.outputSerial().println(F("{"));
+	System::outputSerial().println(F("{"));
 
-	Shared::system.outputSerial().print(F("\t\"Acc X\": "));
-	Shared::system.outputSerial().print(getAccX());
-	Shared::system.outputSerial().println(F(","));
+	System::outputSerial().print(F("\t\"Acc X\": "));
+	System::outputSerial().print(getAccX());
+	System::outputSerial().println(F(","));
 
-	Shared::system.outputSerial().print(F("\t\"Acc Y\": "));
-	Shared::system.outputSerial().print(getAccY());
-	Shared::system.outputSerial().println(F(","));
+	System::outputSerial().print(F("\t\"Acc Y\": "));
+	System::outputSerial().print(getAccY());
+	System::outputSerial().println(F(","));
 
-	Shared::system.outputSerial().print(F("\t\"Acc Z\": "));
-	Shared::system.outputSerial().print(getAccZ());
-	Shared::system.outputSerial().println(F(","));
+	System::outputSerial().print(F("\t\"Acc Z\": "));
+	System::outputSerial().print(getAccZ());
+	System::outputSerial().println(F(","));
 
-	Shared::system.outputSerial().print(F("\t\"Gyro Roll\": "));
-	Shared::system.outputSerial().print(getGyroRoll());
-	Shared::system.outputSerial().println(F(","));
+	System::outputSerial().print(F("\t\"Gyro Roll\": "));
+	System::outputSerial().print(getGyroRoll());
+	System::outputSerial().println(F(","));
 
-	Shared::system.outputSerial().print(F("\t\"Gyro Pitch\": "));
-	Shared::system.outputSerial().print(getGyroPitch());
-	Shared::system.outputSerial().println(F(","));
+	System::outputSerial().print(F("\t\"Gyro Pitch\": "));
+	System::outputSerial().print(getGyroPitch());
+	System::outputSerial().println(F(","));
 
-	Shared::system.outputSerial().print(F("\t\"Gyro Yaw\": "));
-	Shared::system.outputSerial().println(getGyroYaw());
+	System::outputSerial().print(F("\t\"Gyro Yaw\": "));
+	System::outputSerial().println(getGyroYaw());
 
-	Shared::system.outputSerial().println(F("}"));
+	System::outputSerial().println(F("}"));
 }
