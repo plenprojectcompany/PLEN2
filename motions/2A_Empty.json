@@ -76,9 +76,9 @@
 					"value": 0
 				}
 			],
-			"transition_time_ms": 1000
+			"transition_time_ms": 32
 		}
 	],
-	"name": "Upright",
-	"slot": 44
+	"name": "Empty",
+	"slot": 42
 }

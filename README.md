@@ -10,19 +10,20 @@ The world's first printable open-source humanoid.
 3. Install firmware. (This is placed "/arduino/firmware/" directory.)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/firmware)
 4. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
-   [See also...](https://plen.jp/playground/wiki/tutorials/index.html)
+    - [Print Details](http://plen.jp/playground/wiki/specifications/index.html)
+    - [Assembling Instructions](https://plen.jp/playground/wiki/tutorials/index.html)
 5. Configure home positions of joints. (This step is done by using
-   [PLENUtilities](https://github.com/plenproject/plen__control_server/releases).)
+   [PLENUtilities](https://github.com/plenprojectcompany/plen-ControlServer/releases).)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/tune)
-6. Write all motions. (Please check "/motion/*/" directory and use MotionInstaller
-   ([win](https://github.com/plenproject/plen__motion_installer_gui_win/releases) or
-   [mac](https://github.com/plenproject/plen__motion_installer_gui_mac/releases)).)
+6. Write all motions. (Please check "/motions/*/" directory and use MotionInstaller.
    [See also...](https://plen.jp/playground/wiki/tutorials/motion_installer/simple_usage)
+    - [MotionInstaller for Windows](https://github.com/plenprojectcompany/plen-MotionInstaller_Win/releases)
+    - [MotionInstaller for OSX](https://github.com/plenprojectcompany/plen-MotionInstaller_OSX/releases)
 7. Hello, world where PLEN is!
 
 
 ## Enjoy More, with PLEN :)
-- Let moving PLEN as you like! [Check it out.](https://plen.jp/playground/motion-editor/)
+- Let PLEN move as you like! [Check it out.](https://plen.jp/playground/motion-editor/)
 - Learn about creativity thinking, structuring logics, or programing. [Check it out.](https://plen.jp/playground/scenography/)
 - Communicate other users. [Check it out.](https://plen.jp/playground/forum/)
 - Get more details of PLEN. [Check it out.](https://plen.jp/playground/wiki/)
@@ -31,18 +32,11 @@ The world's first printable open-source humanoid.
 
 ## Development Repositories
 ### Solid Works
-SolidWorks is used for to build [mechanism elements](https://github.com/plenproject/plen__3DModel_for_SolidWorks).
-
-- Body
-- Foot
-- Hand
-- Neck
-- Servo bracket
-- Servo horn
+SolidWorks is used for to build [mechanism elements](https://github.com/plenprojectcompany/plen-3DModel_SolidWorks).
 
 ### Blender
-Blender is used for to build [high design quality parts](https://github.com/plenproject/plen__3DModel_for_Blender).
-In the future, all parts will be implemented by SolidWorks.
+Blender is used for to build [high design quality parts](https://github.com/plenprojectcompany/plen-3DModel_Blender).
+In the future, all parts will be uploaded.
 
 - 3D Model (the whole body)
 - Face (head and barb)
@@ -53,17 +47,17 @@ We define here as the default repository of the firmware,
 and it's already installed on a control-board.
 
 If you are interested deeply in the firmware, please check
-[a development repository (branch) the manager has](https://github.com/Guvalif/plen-Firmware_Arduino/tree/v1.x).
+[a development repository (branch)](https://github.com/Guvalif/plen-Firmware_Arduino/tree/v1.x).
 
 ### Android
-- [Controller and visual programming language](https://github.com/plenproject/plen__Scenography_for_Android)
+- [Controller and visual programming language](https://github.com/plenprojectcompany/plen-Scenography_Android)
 
 ### iOS
-- [Controller and visual programming language](https://github.com/plenproject/plen-Scenography_iOS)
+- [Controller and visual programming language](https://github.com/plenprojectcompany/plen-Scenography_iOS)
 
 ### Web Application
-- [Motion editor](https://github.com/plenproject/plen__motion_editor_for_web)
-- [Control server](https://github.com/plenproject/plen__control_server), A communication tool between HTTP and Serial
+- [Motion editor](https://github.com/plenprojectcompany/plen-MotionEditor_Web)
+- [Control server](https://github.com/plenprojectcompany/plen-ControlServer), A communication tool between HTTP and Serial
 
 ### Eagle
 > EAGLE PCB Design Software is the tool of choice for thousands of engineers worldwide.
@@ -71,8 +65,8 @@ If you are interested deeply in the firmware, please check
 > and allows every user to choose the configuration that meets their individual requirements.
 > (origin: http://www.cadsoftusa.com/)
 
-- Printed circuit board CAD for [control-board](https://github.com/plenproject/plen-ControlBoard)
-- Printed circuit board CAD for [head-board](https://github.com/plenproject/plen-HeadBoard)
+- Printed circuit board CAD for [control-board](https://github.com/plenprojectcompany/plen-ControlBoard)
+- Printed circuit board CAD for [head-board](https://github.com/plenprojectcompany/plen-HeadBoard)
 
 
 ## Laws of PLEN
@@ -84,4 +78,4 @@ You could use PLEN for every imaginable things, but please observe the following
 
 
 ## Copyright
-- [PLEN Project Company](https://plen.jp/), and all contributors.
+- [PLEN Project Company Inc](https://plen.jp/), and all contributors.
