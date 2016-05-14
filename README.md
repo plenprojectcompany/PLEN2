@@ -1,4 +1,4 @@
-PLEN2 | PLEN Project Company
+PLEN2 | PLEN Project Company Inc.
 ================================================================================
 
 The world's first printable open-source humanoid.
@@ -31,12 +31,14 @@ The world's first printable open-source humanoid.
 
 
 ## Development Repositories
-### Solid Works
-SolidWorks is used for to build [mechanism elements](https://github.com/plenprojectcompany/plen-3DModel_SolidWorks).
+### 3D Model
+- [For SolidWorks](https://github.com/plenprojectcompany/plen-3DModel_SolidWorks)
+- [For Fusion360](https://github.com/plenprojectcompany/plen-3DModel_Fusion360)
+- [For Blender](https://github.com/plenprojectcompany/plen-3DModel_Blender)
 
-### Blender
-Blender is used for to build [high design quality parts](https://github.com/plenprojectcompany/plen-3DModel_Blender).
-In the future, all parts will be uploaded.
+Blender is only used for to build high design quality parts. In the future, all parts will be uploaded.
+
+For example...
 
 - 3D Model (the whole body)
 - Face (head and barb)
