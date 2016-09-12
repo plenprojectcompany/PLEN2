@@ -5,7 +5,7 @@ The world's first printable open-source humanoid.
 
 
 ## Getting Started
-1. Download this repository.
+1. [Download](https://github.com/plenprojectcompany/PLEN2/archive/master.zip) this repository.
 2. Get control boards and servo motors. [Buy all!](https://plen.jp/shop/)
 3. Install firmware. (This is placed "/arduino/firmware/" directory.)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/firmware)
@@ -13,10 +13,11 @@ The world's first printable open-source humanoid.
     - [Print Details](http://plen.jp/playground/wiki/specifications/index.html)
     - [Assembling Instructions](https://plen.jp/playground/wiki/tutorials/index.html)
 5. Configure home positions of joints. (This step is done by using
-   [PLENUtilities](https://github.com/plenprojectcompany/plen-ControlServer/releases).)
+   [PLEN Utils](https://github.com/plenprojectcompany/plen-ControlServer/releases/tag/v2.0.1).)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/tune)
-6. Write all motions. (Please check "/motions/*/" directory and use MotionInstaller.
+6. Write all motions. (Please check "/motions/*/" directory and use MotionInstaller.)
    [See also...](https://plen.jp/playground/wiki/tutorials/motion_installer/simple_usage)
+    - In the future, this step will be included in the PLEN Utils.
     - [MotionInstaller for Windows](https://github.com/plenprojectcompany/plen-MotionInstaller_Win/releases)
     - [MotionInstaller for OSX](https://github.com/plenprojectcompany/plen-MotionInstaller_OSX/releases)
 7. Hello, world where PLEN is!
@@ -53,9 +54,11 @@ If you are interested deeply in the firmware, please check
 
 ### Android
 - [Controller and visual programming language](https://github.com/plenprojectcompany/plen-Scenography_Android)
+- You could download the built application on the [Play Store page](https://play.google.com/store/apps/details?id=jp.plen.scenography).
 
 ### iOS
 - [Controller and visual programming language](https://github.com/plenprojectcompany/plen-Scenography_iOS)
+- You could download the built application on the [App Store page](https://itunes.apple.com/gb/app/scenography/id1104624847?mt=8).
 
 ### Web Application
 - [Motion editor](https://github.com/plenprojectcompany/plen-MotionEditor_Web)
