@@ -3,8 +3,8 @@
 
 #include <EEPROM.h>
 #include <Wire.h>
-
 #include <ArduinoUnit.h>
+
 #include "Pin.h"
 #include "System.h"
 #include "ExternalEEPROM.h"
@@ -13,388 +13,353 @@
 
 
 /*!
-	@brief テストケース選択用プリプロセスマクロ
+    @brief テストケース選択用プリプロセスマクロ
 */
-#define TEST_HARD false //!< プロセッサに負荷のかかるテストについても実行します。
+#define TEST_HARD true //!< プロセッサに負荷のかかるテストについても実行します。
 
 
 namespace
 {
-	void validRandomize(PLEN2::Motion::Header& header)
-	{
-		using namespace PLEN2::Motion;
+    const uint8_t getRandomSlot()
+    {
+        using namespace PLEN2::Motion;
 
-		header.frame_length  = random(Header::FRAMELENGTH_MIN, Header::FRAMELENGTH_MAX + 1);
-		header.use_extra     = random();
-		header.use_jump      = random();
-		header.use_loop      = random();
-		header.loop_begin    = random();
-		header.loop_end      = random();
-		header.loop_count    = random();
-		header.jump_slot     = random();
-		header.stop_flags[0] = random();
-		header.stop_flags[1] = random();
-		header.stop_flags[2] = random();
+        return random(SLOT_BEGIN, SLOT_END);
+    }
 
-		for (int index = 0; index < Header::NAME_LENGTH; index++)
-		{
-			header.name[index] = random();
-		}
-	}
+    const uint8_t getRandomIndex()
+    {
+        using namespace PLEN2::Motion;
 
-	void validRandomize(PLEN2::Motion::Frame& frame)
-	{
-		using namespace PLEN2;
-		using namespace PLEN2::Motion;
+        return random(Frame::FRAME_BEGIN, Frame::FRAME_END);
+    }
 
-		frame.transition_time_ms = random();
+    void validRandomize(PLEN2::Motion::Header& header)
+    {
+        using namespace PLEN2::Motion;
 
-		for (int index = 0; index < JointController::SUM; index++)
-		{
-			frame.joint_angle[index] = random();
-		}
+        header.frame_length  = random(Header::FRAMELENGTH_MIN, Header::FRAMELENGTH_MAX + 1);
+        header.use_extra     = random();
+        header.use_jump      = random();
+        header.use_loop      = random();
+        header.loop_begin    = random();
+        header.loop_end      = random();
+        header.loop_count    = random();
+        header.jump_slot     = random();
+        header.stop_flags[0] = random();
+        header.stop_flags[1] = random();
 
-		for (int index = 0; index < 8; index++)
-		{
-			frame.device_value[index] = random();
-		}
-	}
+        for (int index = 0; index < Header::NAME_LENGTH; index++)
+        {
+            header.name[index] = random();
+        }
+    }
+
+    void validRandomize(PLEN2::Motion::Frame& frame)
+    {
+        using namespace PLEN2;
+        using namespace PLEN2::Motion;
+
+        frame.transition_time_ms = random();
+
+        for (int index = 0; index < JointController::JOINTS_SUM; index++)
+        {
+            frame.joint_angle[index] = random();
+        }
+    }
+
+    template<typename T>
+    bool checkIdentity(const T& lhs, const T& rhs, uint8_t size)
+    {
+        const uint8_t* lhs_ptr = reinterpret_cast<const uint8_t*>(&lhs);
+        const uint8_t* rhs_ptr = reinterpret_cast<const uint8_t*>(&rhs);
+
+        while (size--)
+        {
+            if (lhs_ptr[size] != rhs_ptr[size]) return false;
+        }
+
+        return true;
+    }
 }
 
 
 /*!
-	@brief ランダムに選択したスロットへの、モーションヘッダの設定テスト
+    @brief ランダムに選択したスロットへの、モーションヘッダの設定テスト
 */
 test(RandomSlot_SetHeader)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	const char SLOT = random(SLOT_BEGIN, SLOT_END);
+    // Setup ==================================================================
+    const uint8_t SLOT = getRandomSlot();
 
-	Header expected, actual;
+    Header expected, actual;
 
-	validRandomize(expected);
-	expected.slot = actual.slot = SLOT;
+    validRandomize(expected);
 
-	// Run =====================================================================
-	expected.set();
-	actual.get();
+    // Run ====================================================================
+    Header::set(SLOT, expected);
+    Header::get(SLOT, actual);
 
-	// Assert ==================================================================
-	const char* expected_ptr = reinterpret_cast<const char*>(&expected);
-	const char* actual_ptr   = reinterpret_cast<const char*>(&actual);
-
-	for (int index = 0; index < sizeof(Header); index++)
-	{
-		assertEqual(expected_ptr[index], actual_ptr[index]);
-	}
+    // Assert =================================================================
+    assertTrue( checkIdentity(expected, actual, sizeof(Header)) );
 }
 
 
 /*!
-	@brief 全てのスロットへの、モーションヘッダの設定テスト
+    @brief 全てのスロットへの、モーションヘッダの設定テスト
 */
 test(AllSlot_SetHeader)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	Header expected, actual;
+    // Setup ==================================================================
+    Header expected, actual;
 
-	for (char slot = SLOT_BEGIN; slot < SLOT_END; slot++)
-	{
-		// Setup ===============================================================
-		validRandomize(expected);
-		expected.slot = actual.slot = slot;
+    for (uint8_t slot = SLOT_BEGIN; slot < SLOT_END; slot++)
+    {
+        // Setup ==============================================================
+        validRandomize(expected);
 
-		// Run =================================================================
-		expected.set();
-		actual.get();
+        // Run ================================================================
+        Header::set(slot, expected);
+        Header::get(slot, actual);
 
-		// Assert ==============================================================
-		const char* expected_ptr = reinterpret_cast<const char*>(&expected);
-		const char* actual_ptr   = reinterpret_cast<const char*>(&actual);
-
-		for (int index = 0; index < sizeof(Header); index++)
-		{
-			assertEqual(expected_ptr[index], actual_ptr[index]);
-		}
-	}
+        // Assert =============================================================
+        assertTrue( checkIdentity(expected, actual, sizeof(Header)) );
+    }
 }
 
 
 /*!
-	@brief ランダムに選択したスロットへの、モーションフレーム単体の設定テスト
+    @brief ランダムに選択したスロットへの、モーションフレーム単体の設定テスト
 */
 test(RandomSlotRandomFrame_SetFrame)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	const char SLOT  = random(SLOT_BEGIN, SLOT_END);
-	const char INDEX = random(Frame::FRAME_BEGIN, Frame::FRAME_END);
+    // Setup ==================================================================
+    const char SLOT  = getRandomSlot();
+    const char INDEX = getRandomIndex();
 
-	Frame expected, actual;
+    Frame expected, actual;
 
-	validRandomize(expected);
-	expected.index = actual.index = INDEX;
+    validRandomize(expected);
 
-	// Run =====================================================================
-	expected.set(SLOT);
-	actual.get(SLOT);
+    // Run ====================================================================
+    Frame::set(SLOT, INDEX, expected);
+    Frame::get(SLOT, INDEX, actual);
 
-	// Assert ==================================================================
-	const char* expected_ptr = reinterpret_cast<const char*>(&expected);
-	const char* actual_ptr   = reinterpret_cast<const char*>(&actual);
-
-	for (int index = 0; index < sizeof(Frame); index++)
-	{
-		assertEqual(expected_ptr[index], actual_ptr[index]);
-	}
+    // Assert =================================================================
+    assertTrue( checkIdentity(expected, actual, sizeof(Frame)) );
 }
 
 
 /*!
-	@brief ランダムに選択したスロットへの、モーションフレーム全体の設定テスト
+    @brief ランダムに選択したスロットへの、モーションフレーム全体の設定テスト
 */
 test(RandomSlotAllFrame_SetFrame)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	const char SLOT = random(SLOT_BEGIN, SLOT_END);
+    // Setup ==================================================================
+    const char SLOT = getRandomSlot();
 
-	Frame expected, actual;
+    Frame expected, actual;
 
-	for (char index = Frame::FRAME_BEGIN; index < Frame::FRAME_END; index++)
-	{
-		// Setup ===============================================================
-		validRandomize(expected);
-		expected.index = actual.index = index;
+    for (uint8_t index = Frame::FRAME_BEGIN; index < Frame::FRAME_END; index++)
+    {
+        // Setup ==============================================================
+        validRandomize(expected);
 
-		// Run =================================================================
-		expected.set(SLOT);
-		actual.get(SLOT);
+        // Run ================================================================
+        Frame::set(SLOT, index, expected);
+        Frame::get(SLOT, index, actual);
 
-		// Assert ==============================================================
-		const char* expected_ptr = reinterpret_cast<const char*>(&expected);
-		const char* actual_ptr   = reinterpret_cast<const char*>(&actual);
-
-		for (int index = 0; index < sizeof(Frame); index++)
-		{
-			assertEqual(expected_ptr[index], actual_ptr[index]);
-		}
-	}
+        // Assert =============================================================
+        assertTrue( checkIdentity(expected, actual, sizeof(Frame)) );
+    }
 }
 
 
 /*!
-	@brief 全てのスロットへの、モーションフレーム全体の設定テスト
+    @brief 全てのスロットへの、モーションフレーム全体の設定テスト
 */
 test(AllSlotAllFrame_SetFrame)
 {
-	#if TEST_HARD
+    #if TEST_HARD
 
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	Frame expected, actual;
+    // Setup ==================================================================
+    Frame expected, actual;
 
-	for (char slot = SLOT_BEGIN; slot < SLOT_END; slot++)
-	{
-		for (char index = Frame::FRAME_BEGIN; index < Frame::FRAME_END; index++)
-		{
-			// Setup ===========================================================
-			validRandomize(expected);
-			expected.index = actual.index = index;
+    for (uint8_t slot = SLOT_BEGIN; slot < SLOT_END; slot++)
+    {
+        for (uint8_t index = Frame::FRAME_BEGIN; index < Frame::FRAME_END; index++)
+        {
+            // Setup ==========================================================
+            validRandomize(expected);
 
-			// Run =============================================================
-			expected.set(slot);
-			actual.get(slot);
+            // Run ============================================================
+            Frame::set(slot, index, expected);
+            Frame::get(slot, index, actual);
 
-			// Assert ==========================================================
-			const char* expected_ptr = reinterpret_cast<const char*>(&expected);
-			const char* actual_ptr   = reinterpret_cast<const char*>(&actual);
+            // Assert =========================================================
+            assertTrue( checkIdentity(expected, actual, sizeof(Frame)) );
+        }
+    }
 
-			for (int index = 0; index < sizeof(Frame); index++)
-			{
-				assertEqual(expected_ptr[index], actual_ptr[index]);
-			}
-		}
-	}
-
-	#else
-		skip();
-	#endif
+    #else
+        skip();
+    #endif
 }
 
 
 /*!
-	@brief ヘッダ書き込みにおける、異常系のテスト
+    @brief ヘッダ書き込みにおける、異常系のテスト
 */
 test(SetHeader_InvalidInputs)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	Header header;
+    // Setup ==================================================================
+    Header header;
 
-	{
-		// Setup ===============================================================
-		header.slot = SLOT_END; // Invalid
+    {
+        // Run ================================================================
+        bool expected = false;
+        bool actual   = Header::set(SLOT_END, header);
 
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = header.set();
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+    {
+        // Setup ==============================================================
+        header.frame_length = 0;
 
-	{
-		// Setup ===============================================================
-		header.slot         = 0;
-		header.frame_length = 0; // Invalid
+        // Run ================================================================
+        bool expected = false;
+        bool actual   = Header::set(0, header);
 
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = header.set();
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+    {
+        // Setup ==============================================================
+        header.frame_length = Header::FRAMELENGTH_MAX + 1;
 
-	{
-		// Setup ===============================================================
-		header.slot         = 0;
-		header.frame_length = Header::FRAMELENGTH_MAX + 1; // Invalid
+        // Run ================================================================
+        bool expected = false;
+        bool actual   = Header::set(0, header);
 
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = header.set();
-
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief ヘッダ読み込みにおける、異常系のテスト
+    @brief ヘッダ読み込みにおける、異常系のテスト
 */
 test(GetHeader_InvalidInputs)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	Header header;
+    // Setup ==================================================================
+    Header header;
 
-	{
-		// Setup ===============================================================
-		header.slot = SLOT_END; // Invalid
+    {
+        // Run ================================================================
+        bool expected = false;
+        bool actual   = Header::get(SLOT_END, header);
 
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = header.get();
-
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief フレーム書き込みにおける、異常系のテスト
+    @brief フレーム書き込みにおける、異常系のテスト
 */
 test(SetFrame_InvalidInputs)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	Frame frame;
+    // Setup ===================================================================
+    Frame frame;
 
-	{
-		// Setup ===============================================================
-		frame.index = 0;
+    {
+        // Run =================================================================
+        bool expected = false;
+        bool actual   = Frame::set(SLOT_END, 0, frame);
 
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = frame.set(SLOT_END /* = Invalid */);
+        // Assert ==============================================================
+        assertEqual(expected, actual);
+    }
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+    {
+        // Run =================================================================
+        bool expected = false;
+        bool actual   = Frame::set(0, Frame::FRAME_END, frame);
 
-	{
-		// Setup ===============================================================
-		frame.index = Frame::FRAME_END; // Invalid
-
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = frame.set(0);
-
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        // Assert ==============================================================
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief フレーム読み込みにおける、異常系のテスト
+    @brief フレーム読み込みにおける、異常系のテスト
 */
 test(GetFrame_InvalidInputs)
 {
-	using namespace PLEN2::Motion;
+    using namespace PLEN2::Motion;
 
-	// Setup ===================================================================
-	Frame frame;
+    // Setup ===================================================================
+    Frame frame;
 
-	{
-		// Setup ===============================================================
-		frame.index = 0;
+    {
+        // Run =================================================================
+        bool expected = false;
+        bool actual   = Frame::get(SLOT_END, 0, frame);
 
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = frame.get(SLOT_END /* = Invalid */);
+        // Assert ==============================================================
+        assertEqual(expected, actual);
+    }
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+    {
+        // Run =================================================================
+        bool expected = false;
+        bool actual   = Frame::get(0, Frame::FRAME_END, frame);
 
-	{
-		// Setup ===============================================================
-		frame.index = Frame::FRAME_END; // Invalid
-
-		// Run =================================================================
-		bool expected = false;
-		bool actual   = frame.get(0);
-
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        // Assert ==============================================================
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief アプリケーション・エントリポイント
+    @brief アプリケーション・エントリポイント
 */
 void setup()
 {
-	randomSeed(
-		analogRead(PLEN2::Pin::RANDOM_DEVICE_IN())
-	);
+    randomSeed( analogRead(PLEN2::Pin::RANDOM_DEVICE_IN) );
 
-	volatile PLEN2::System         system;
-	volatile PLEN2::ExternalEEPROM exteeprom;
+    PLEN2::System::begin();
+    PLEN2::ExternalEEPROM::begin();
 
-	while (!Serial); // for the Arduino Leonardo/Micro only.
+    while (!Serial); // for the Arduino Leonardo/Micro only.
 
-	Serial.print(F("# Test : "));
-	Serial.println(__FILE__);
+    Serial.print(F("# Test : "));
+    Serial.println(__FILE__);
 }
 
 void loop()
 {
-	Test::run();
+    Test::run();
 }

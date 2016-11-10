@@ -1,8 +1,8 @@
 /*!
-	@file      Protocol.h
-	@brief     Analysis class of the PLEN2's protocol.
-	@author    Kazuyuki TAKASE
-	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
+    @file      Protocol.h
+    @brief     Analysis class of the PLEN2's protocol.
+    @author    Kazuyuki TAKASE
+    @copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
 
 #pragma once
@@ -11,122 +11,122 @@
 #define PLEN2_PROTOCOL_H
 
 
+#include <stdint.h>
+
 namespace PLEN2
 {
-	class Protocol;
+    class Protocol;
 }
 
 namespace Utility
 {
-	class AbstractParser;
+    class AbstractParser;
 }
 
 /*!
-	@brief Analysis class of the PLEN2's protocol
+    @brief Analysis class of the PLEN2's protocol
 
-	The class only analyses the command line given,
-	so should override the event handler(s) with inheriting the class yourself.
+    The class only analyses the command line given,
+    so you should override the event handler(s) by inheriting the class yourself.
 
-	Please see the virtual methods to get more details.
+    Please see the virtual methods to get more details.
 */
 class PLEN2::Protocol
 {
 protected:
-	/*!
-		@brief List of the internal states
-	*/
-	typedef enum
-	{
-		READY,               //!< Ready.
-		HEADER_INCOMING = 0, //!< Will receive string that might be HEADER. (Alias of state READY.)
-		COMMAND_INCOMING,    //!< Will receive string that might be COMMAND.
-		ARGUMENTS_INCOMING,  //!< Will receive string that might be ARGUMENTS.
-		STATE_EOE            //!< Summation of the states.
-	} State;
+    /*!
+        @brief List of the internal states
+    */
+    typedef enum
+    {
+        READY,               //!< Ready.
+        HEADER_INCOMING = 0, //!< Will receive string that might be HEADER. (Alias of state READY.)
+        COMMAND_INCOMING,    //!< Will receive string that might be COMMAND.
+        ARGUMENTS_INCOMING,  //!< Will receive string that might be ARGUMENTS.
+        STATE_EOE            //!< Summation of the states.
+    } State;
 
-	/*!
-		@brief Buffer struct
-	*/
-	class Buffer
-	{
-	public:
-		enum {
-			/*!
-				@brief Buffer length
+    /*!
+        @brief Buffer struct
+    */
+    class Buffer
+    {
+    public:
+        /*!
+            @brief Buffer length
 
-				@attention
-				The value is required at least more than BLE payload length (= 20 bytes),
-				and it should be defined 2^N length for processing the class with high speed.
-			*/
-			LENGTH = 128
-		};
+            @attention
+            The value is required to be at least more than BLE payload length (= 20 bytes),
+            and it should be defined 2^N length for processing the class with high speed.
+        */
+        enum { LENGTH = 128 };
 
-		char          data[LENGTH]; //!< Actual buffer instance.
-		unsigned char position;     //!< Current iterator's position.
+        char    data[LENGTH]; //!< Actual buffer instance.
+        uint8_t position;     //!< Current iterator's position.
 
-		/*!
-			@brief Constructor
-		*/
-		Buffer()
-			: position(0)
-		{
-			for (unsigned char index = 0; index < LENGTH; index++)
-			{
-				data[index] = '\0';
-			}
-		}
-	};
+        /*!
+            @brief Constructor
+        */
+        Buffer()
+            : position(0)
+        {
+            for (uint8_t index = 0; index < LENGTH; index++)
+            {
+                data[index] = '\0';
+            }
+        }
+    };
 
-	Buffer m_buffer;
-	State m_state;
-	unsigned char m_store_length;
-	bool m_installing;
-	Utility::AbstractParser* m_parser[STATE_EOE];
+    Buffer  m_buffer;
+    State   m_state;
+    uint8_t m_store_length;
+    bool    m_installing;
+    Utility::AbstractParser* m_parser[STATE_EOE];
 
-	/*!
-		@brief Abort analysis
-	*/
-	void m_abort();
+    /*!
+        @brief Abort analysis
+    */
+    void m_abort();
 
 public:
-	/*!
-		@brief Constructor
-	*/
-	Protocol();
+    /*!
+        @brief Constructor
+    */
+    Protocol();
 
-	/*!
-		@brief Destructor
-	*/
-	virtual ~Protocol() {}
+    /*!
+        @brief Destructor
+    */
+    virtual ~Protocol() {}
 
-	/*!
-		@brief Read a character, and store it in the ring buffer
+    /*!
+        @brief Read a character, and store it in the ring buffer
 
-		@param [in] byte A character.
-	*/
-	void readByte(char byte);
+        @param [in] byte A character.
+    */
+    void readByte(char byte);
 
-	/*!
-		@brief Accept buffered string considering internal state
+    /*!
+        @brief Accept buffered string considering internal state
 
-		@return Result
-	*/
-	bool accept();
+        @return Result
+    */
+    bool accept();
 
-	/*!
-		@brief Transit internal state
-	*/
-	void transitState();
+    /*!
+        @brief Transit internal state
+    */
+    void transitState();
 
-	/*!
-		@brief User-defined hook that runs before transitState()
-	*/
-	virtual void beforeHook();
+    /*!
+        @brief User-defined hook that runs before transitState()
+    */
+    virtual void beforeHook();
 
-	/*!
-		@brief User-defined hook that runs after transitState()
-	*/
-	virtual void afterHook();
+    /*!
+        @brief User-defined hook that runs after transitState()
+    */
+    virtual void afterHook();
 };
 
 #endif // PLEN2_PROTOCOL_H

@@ -1,10 +1,10 @@
 {
-	"root": "../../firmware/",
-	"import": [
-		"Protocol",
-		"Parser",
-		"Profiler",
-		"System",
-		"Pin"
-	]
+    "root": "../../firmware/",
+    "import": [
+        "Protocol",
+        "Parser",
+        "Profiler",
+        "System",
+        "Pin"
+    ]
 }

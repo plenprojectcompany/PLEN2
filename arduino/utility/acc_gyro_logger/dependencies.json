@@ -1,8 +1,8 @@
 {
-	"root": "../../firmware/",
-	"import": [
-		"Pin",
-		"System",
-		"AccelerationGyroSensor"
-	]
+    "root": "../../firmware/",
+    "import": [
+        "Pin",
+        "System",
+        "AccelerationGyroSensor"
+    ]
 }

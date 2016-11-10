@@ -7,61 +7,60 @@
 
 namespace
 {
-	PLEN2::JointController joint_ctrl;
+    PLEN2::JointController joint_ctrl;
 
-	unsigned int pwm = 512;
+    uint16_t pwm = 512;
 }
 
 
 void setup()
 {
-	volatile PLEN2::System s;
-
-	joint_ctrl.loadSettings();
+    PLEN2::System::begin();
+    joint_ctrl.loadSettings();
 }
 
 void loop()
 {
-	using namespace PLEN2;
+    using namespace PLEN2;
 
-	if (System::USBSerial().available())
-	{
-		switch (System::USBSerial().read())
-		{
-			case 'm':
-			{
-				if (pwm != 1023)
-				{
-					pwm++;
-				}
+    if (System::USBSerial().available())
+    {
+        switch (System::USBSerial().read())
+        {
+            case 'm':
+            {
+                if (pwm != 1023)
+                {
+                    pwm++;
+                }
 
-				break;
-			}
+                break;
+            }
 
-			case 'p':
-			{
-				if (pwm != 0)
-				{
-					pwm--;
-				}
+            case 'p':
+            {
+                if (pwm != 0)
+                {
+                    pwm--;
+                }
 
-				break;
-			}
+                break;
+            }
 
-			default:
-			{
-				// noop.
+            default:
+            {
+                // no operations.
 
-				break;
-			}
-		}
+                break;
+            }
+        }
 
-		System::USBSerial().print(F("output : "));
-		System::USBSerial().print(1023 - pwm);
-		System::USBSerial().print(F(" (internal = "));
-		System::USBSerial().print(pwm);
-		System::USBSerial().println(F(")"));
+        System::USBSerial().print(F("output : "));
+        System::USBSerial().print(1023 - pwm);
+        System::USBSerial().print(F(" (internal = "));
+        System::USBSerial().print(pwm);
+        System::USBSerial().println(F(")"));
 
-		joint_ctrl.m_pwms[0] = pwm;
-	}
+        joint_ctrl.m_pwms[0] = pwm;
+    }
 }

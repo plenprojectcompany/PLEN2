@@ -6,23 +6,27 @@
 
 namespace
 {
-	PLEN2::AccelerationGyroSensor acc_gyro;
+    PLEN2::AccelerationGyroSensor acc_gyro;
+
+    uint32_t call_count = 1;
 }
 
 
 void setup()
 {
-	volatile PLEN2::System s;
+    PLEN2::System::begin();
 
-	while (!Serial);
+    while (!Serial);
 
-	delay(3000); //!< @attention A wait for starting up BLE MCU's firmware
+    delay(3000); //!< @attention A wait for starting up BLE MCU's firmware
 }
 
 void loop()
 {
-	acc_gyro.sampling();
-	acc_gyro.dump();
+    PLEN2::System::outputSerial().print(acc_gyro.sampling() ? F("OK : ") : F("NG : "));
+    PLEN2::System::outputSerial().println(call_count++);
 
-	delay(500);
+    acc_gyro.dump();
+
+    delay(100);
 }

@@ -2,831 +2,822 @@
 
 
 #include <Arduino.h>
-
 #include <ArduinoUnit.h>
+
 #include "System.h"
 #include "Protocol.h"
 
 
 namespace
 {
-	class TestProtocol: public PLEN2::Protocol
-	{
-	public:
-		void abort()
-		{
-			m_abort();
-		}
+    class TestProtocol: public PLEN2::Protocol
+    {
+    public:
+        void abort()
+        {
+            m_abort();
+        }
 
-		void readString(const char* str)
-		{
-			while (*str != '\0')
-			{
-				readByte(*str++);
-			}
-		}
-	};
+        void readString(const char* str)
+        {
+            while (*str != '\0')
+            {
+                readByte(*str++);
+            }
+        }
+    };
 
-	TestProtocol protocol;
+    TestProtocol protocol;
 }
 
 
 /*!
-	@brief 正常なヘッダ入力時の挙動テスト
+    @brief 正常なヘッダ入力時の挙動テスト
 */
 test(Header_ValidInputs)
 {
-	// Setup ===================================================================
-	protocol.abort();
+    // Setup ===================================================================
+    protocol.abort();
 
-	// Run & Assert ============================================================
-	{
-		protocol.readByte('$');
+    // Run & Assert ============================================================
+    {
+        protocol.readByte('$');
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
+        assertEqual(expected, actual);
 
-		protocol.abort();
-	}
+        protocol.abort();
+    }
 
-	{
-		protocol.readByte('#');
+    {
+        protocol.readByte('#');
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
+        assertEqual(expected, actual);
 
-		protocol.abort();
-	}
+        protocol.abort();
+    }
 
-	{
-		protocol.readByte('>');
+    {
+        protocol.readByte('>');
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
+        assertEqual(expected, actual);
 
-		protocol.abort();
-	}
+        protocol.abort();
+    }
 
-	{
-		protocol.readByte('<');
+    {
+        protocol.readByte('<');
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
+        assertEqual(expected, actual);
 
-		protocol.abort();
-	}
+        protocol.abort();
+    }
 }
 
 
 /*!
-	@brief 異常なヘッダ入力時の挙動テスト
+    @brief 異常なヘッダ入力時の挙動テスト
 */
 test(Header_InvalidInputs)
 {
-	// Setup ===================================================================
-	protocol.abort();
+    // Setup ===================================================================
+    protocol.abort();
 
-	// Run & Assert ============================================================
-	{
-		protocol.readByte('a');
+    // Run & Assert ============================================================
+    {
+        protocol.readByte('a');
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
+        assertEqual(expected, actual);
 
-		protocol.abort();
-	}
+        protocol.abort();
+    }
 
-	{
-		protocol.readByte('0');
+    {
+        protocol.readByte('0');
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
+        assertEqual(expected, actual);
 
-		protocol.abort();
-	}
+        protocol.abort();
+    }
 }
 
 
 /*!
-	@brief 正常なCONTROLLERコマンド入力時の挙動テスト
+    @brief 正常なCONTROLLERコマンド入力時の挙動テスト
 */
 test(Controller_ValidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('$');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('$');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("AD");
+        protocol.readString("AD");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("AN");
+        protocol.readString("AN");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("HP");
+        protocol.readString("HP");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MP");
+        protocol.readString("MP");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MS");
+        protocol.readString("MS");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("PM");
+        protocol.readString("PM");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("SM");
+        protocol.readString("SM");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 異常なCONTROLLERコマンド入力時の挙動テスト
+    @brief 異常なCONTROLLERコマンド入力時の挙動テスト
 */
 test(Controller_InvalidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('$');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('$');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("A");
+        protocol.readString("A");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("M");
+        protocol.readString("M");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("ADXXXX");
+        protocol.readString("ADXXXX");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 正常なINTERPRETERコマンド入力時の挙動テスト
+    @brief 正常なINTERPRETERコマンド入力時の挙動テスト
 */
 test(Interpreter_ValidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('#');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('#');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("PO");
+        protocol.readString("PO");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("PU");
+        protocol.readString("PU");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("RI");
+        protocol.readString("RI");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 異常なINTERPRETERコマンド入力時の挙動テスト
+    @brief 異常なINTERPRETERコマンド入力時の挙動テスト
 */
 test(Interpreter_InvalidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('#');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('#');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("P");
+        protocol.readString("P");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("PUXXXX");
+        protocol.readString("PUXXXX");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("0");
+        protocol.readString("0");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 正常なSETTERコマンド入力時の挙動テスト
+    @brief 正常なSETTERコマンド入力時の挙動テスト
 */
 test(Setter_ValidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('>');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('>');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("HO");
+        protocol.readString("HO");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("IN");
+        protocol.readString("JS");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("JS");
+        protocol.readString("MA");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MA");
+        protocol.readString("MF");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MF");
+        protocol.readString("MH");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MH");
+        protocol.readString("MI");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
-
-	{
-		setup();
-
-		protocol.readString("MI");
-
-		bool expected = true;
-		bool actual   = protocol.accept();
-
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 異常なSETTERコマンド入力時の挙動テスト
+    @brief 異常なSETTERコマンド入力時の挙動テスト
 */
 test(Setter_InvalidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('>');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('>');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("M");
+        protocol.readString("M");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("JSXXXX");
+        protocol.readString("JSXXXX");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("0");
+        protocol.readString("0");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 正常なGETTERコマンド入力時の挙動テスト
+    @brief 正常なGETTERコマンド入力時の挙動テスト
 */
 test(Getter_ValidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('<');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('<');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("JS");
+        protocol.readString("JS");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MO");
+        protocol.readString("MO");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("VI");
+        protocol.readString("VI");
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 異常なGETTERコマンド入力時の挙動テスト
+    @brief 異常なGETTERコマンド入力時の挙動テスト
 */
 test(Getter_InvalidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()()
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()()
+        {
+            protocol.abort();
 
-			protocol.readByte('<');
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readByte('<');
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	Setup setup;
+    Setup setup;
 
-	// Run & Assert ============================================================
-	{
-		setup();
+    // Run & Assert ============================================================
+    {
+        setup();
 
-		protocol.readString("J");
+        protocol.readString("J");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("MOXXXX");
+        protocol.readString("MOXXXX");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup();
+    {
+        setup();
 
-		protocol.readString("0");
+        protocol.readString("0");
 
-		bool expected = false;
-		bool actual   = protocol.accept();
+        bool expected = false;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief 正常なARGS入力時の挙動テスト
+    @brief 正常なARGS入力時の挙動テスト
 */
 test(Args_ValidInputs)
 {
-	// Setup ===================================================================
-	struct Setup
-	{
-		void operator()(const char* input)
-		{
-			protocol.abort();
+    // Setup ===================================================================
+    struct Setup
+    {
+        void operator()(const char* input)
+        {
+            protocol.abort();
 
-			protocol.readByte(input[0]);
-			protocol.accept();
-			protocol.transitState();
+            protocol.readByte(input[0]);
+            protocol.accept();
+            protocol.transitState();
 
-			protocol.readString(input + 1);
-			protocol.accept();
-			protocol.transitState();
-		}
-	};
+            protocol.readString(input + 1);
+            protocol.accept();
+            protocol.transitState();
+        }
+    };
 
-	struct nInput
-	{
-		void operator()(const char input, int loop)
-		{
-			for (int index = 0; index < loop; index++)
-			{
-				protocol.readByte(input);
-			}
-		}
-	};
+    struct nInput
+    {
+        void operator()(const char input, int loop)
+        {
+            for (int index = 0; index < loop; index++)
+            {
+                protocol.readByte(input);
+            }
+        }
+    };
 
-	Setup  setup;
-	nInput n_input;
+    Setup  setup;
+    nInput n_input;
 
-	// Run & Assert ============================================================
-	{
-		setup("$AD");
+    // Run & Assert ============================================================
+    {
+        setup("$AD");
 
-		n_input('0', 5);
+        n_input('0', 5);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup("$AN");
+    {
+        setup("$AN");
 
-		n_input('1', 5);
+        n_input('1', 5);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup("$MP");
+    {
+        setup("$MP");
 
-		n_input('2', 2);
+        n_input('2', 2);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup("$PM");
+    {
+        setup("$PM");
 
-		n_input('3', 2);
+        n_input('3', 2);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup("#PU");
+    {
+        setup("#PU");
 
-		n_input('4', 4);
+        n_input('4', 4);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup(">HO");
+    {
+        setup(">HO");
 
-		n_input('5', 5);
+        n_input('5', 5);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup(">MA");
+    {
+        setup(">MA");
 
-		n_input('6', 5);
+        n_input('6', 5);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup(">MF");
+    {
+        setup(">MF");
 
-		n_input('7', 104);
+        n_input('7', 104);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup(">MH");
+    {
+        setup(">MH");
 
-		n_input('8', 30);
+        n_input('8', 35);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup(">MI");
+    {
+        setup(">MI");
 
-		n_input('9', 5);
+        n_input('9', 5);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 
-	{
-		setup("<MO");
+    {
+        setup("<MO");
 
-		n_input('A', 2);
+        n_input('A', 2);
 
-		bool expected = true;
-		bool actual   = protocol.accept();
+        bool expected = true;
+        bool actual   = protocol.accept();
 
-		assertEqual(expected, actual);
-	}
+        assertEqual(expected, actual);
+    }
 }
 
 
 /*!
-	@brief アプリケーション・エントリポイント
+    @brief アプリケーション・エントリポイント
 */
 void setup()
 {
-	while (!Serial); // for the Arduino Leonardo/Micro only.
+    Serial.begin(2000000);
 
-	Serial.print(F("# Test : "));
-	Serial.println(__FILE__);
+    while (!Serial); // for the Arduino Leonardo/Micro only.
+
+    Serial.print(F("# Test : "));
+    Serial.println(__FILE__);
 }
 
 void loop()
 {
-	Test::run();
+    Test::run();
 }

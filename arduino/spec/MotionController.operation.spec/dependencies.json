@@ -9,6 +9,7 @@
 		"Parser",
 		"Pin",
 		"System",
-		"Profiler"
+		"Profiler",
+		"BuildConfig"
 	]
 }

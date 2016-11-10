@@ -8,6 +8,7 @@
 		"Pin",
 		"System",
 		"Interpreter",
-		"Profiler"
+		"Profiler",
+		"BuildConfig"
 	]
 }

@@ -2,200 +2,205 @@
 
 
 #include <Wire.h>
-
 #include <ArduinoUnit.h>
+
 #include "Pin.h"
 #include "ExternalEEPROM.h"
 
 
 /*!
-	@brief テストケース選択用プリプロセスマクロ
+    @brief テストケース選択用プリプロセスマクロ
 */
 #define TEST_HARD false //!< プロセッサに負荷のかかるテストについても実行します。
 
 
 namespace
 {
-	volatile PLEN2::ExternalEEPROM ext_eeprom;
+    const uint16_t getRandomSlot()
+    {
+        using namespace PLEN2;
+
+        return random(ExternalEEPROM::SLOT_BEGIN, ExternalEEPROM::SLOT_END);
+    }
+
+    void bufferRandomize(uint8_t data[], uint8_t size)
+    {
+        while (size--)
+        {
+            data[size] = random(0x00, 0xFF);
+        }
+    }
+
+    bool checkIdentity(const uint8_t lhs[], const uint8_t rhs[], uint8_t size)
+    {
+        while (size--)
+        {
+            if (lhs[size] != rhs[size]) return false;
+        }
+
+        return true;
+    }
 }
 
-
 /*!
-	@brief ランダムに選択したスロットに読み書きするテスト
+    @brief ランダムに選択したスロットに読み書きするテスト
 
-	ランダムな値を格納した配列を書き込んだ後、即座に読み込み同一性を検証します。
+    ランダムな値を格納した配列を書き込んだ後、即座に読み込み同一性を検証します。
 */
 test(RandomSlot_ReadWrite) 
 {
-	enum { BUFFER_SIZE = 30 };
+    enum { BUFFER_SIZE = 30 };
 
-	// Setup ===================================================================
-	const int slot = random(
-		PLEN2::ExternalEEPROM::SLOT_BEGIN(), PLEN2::ExternalEEPROM::SLOT_END()
-	);
+    // Setup ===================================================================
+    const uint16_t SLOT = getRandomSlot();
 
-	char expected[BUFFER_SIZE] = { 0 };
-	char actual[BUFFER_SIZE]   = { 0 };
+    uint8_t expected[BUFFER_SIZE] = { 0 };
+    uint8_t actual[BUFFER_SIZE]   = { 0 };
 
-	for (int index = 0; index < BUFFER_SIZE; index++)
-	{
-		expected[index] = random(-128, 128);
-	}
+    bufferRandomize(expected, BUFFER_SIZE);
 
-	// Run =====================================================================
-	PLEN2::ExternalEEPROM::writeSlot(slot, expected, BUFFER_SIZE);
-	PLEN2::ExternalEEPROM::readSlot(slot, actual, BUFFER_SIZE);
+    // Run =====================================================================
+    PLEN2::ExternalEEPROM::writeSlot(SLOT, expected, BUFFER_SIZE);
+    PLEN2::ExternalEEPROM::readSlot(SLOT, actual, BUFFER_SIZE);
 
-	// Assert ==================================================================
-	for (int index = 0; index < BUFFER_SIZE; index++)
-	{
-		assertEqual(expected[index], actual[index]);
-	}
+    // Assert ==================================================================
+    assertTrue( checkIdentity(expected, actual, BUFFER_SIZE) );
 }
 
 /*!
-	@brief すべてのスロットに読み書きするテスト
+    @brief すべてのスロットに読み書きするテスト
 
-	ランダムな値を格納した配列を書き込んだ後、即座に読み込み同一性を検証します。
+    ランダムな値を格納した配列を書き込んだ後、即座に読み込み同一性を検証します。
 
-	@attention
-	このテストの実行には約41秒の時間を要します。
-	また、EEPROMの寿命を著しく縮めるため、普段は実行しないことをおすすめします。
+    @attention
+    このテストの実行には約41秒の時間を要します。
+    また、EEPROMの寿命を著しく縮めるため、普段は実行しないことをおすすめします。
 */
 test(AllSlot_ReadWrite)
 {
-	#if TEST_HARD
-		enum { BUFFER_SIZE = 30 };
+    #if TEST_HARD
+        enum { BUFFER_SIZE = 30 };
 
-		for (int slot = PLEN2::ExternalEEPROM::SLOT_BEGIN();
-			 slot < PLEN2::ExternalEEPROM::SLOT_END();
-			 slot++
-		)
-		{
-			// Setup ===========================================================
-			char expected[BUFFER_SIZE] = { 0 };
-			char actual[BUFFER_SIZE]   = { 0 };
+        for (uint16_t slot = PLEN2::ExternalEEPROM::SLOT_BEGIN;
+             slot < PLEN2::ExternalEEPROM::SLOT_END;
+             slot++
+        )
+        {
+            // Setup ===========================================================
+            uint8_t expected[BUFFER_SIZE] = { 0 };
+            uint8_t actual[BUFFER_SIZE]   = { 0 };
 
-			for (int index = 0; index < BUFFER_SIZE; index++)
-			{
-				expected[index] = random(-128, 128);
-			}
+            bufferRandomize(expected, BUFFER_SIZE);
 
-			// Run =============================================================
-			PLEN2::ExternalEEPROM::writeSlot(slot, expected, BUFFER_SIZE);
-			PLEN2::ExternalEEPROM::readSlot(slot, actual, BUFFER_SIZE);
+            // Run =============================================================
+            PLEN2::ExternalEEPROM::writeSlot(slot, expected, BUFFER_SIZE);
+            PLEN2::ExternalEEPROM::readSlot(slot, actual, BUFFER_SIZE);
 
-			// Assert ==========================================================
-			for (int index = 0; index < BUFFER_SIZE; index++)
-			{
-				assertEqual(expected[index], actual[index]);
-			}
-		}
-	#else
-		skip();
-	#endif
+            // Assert ==========================================================
+            assertTrue( checkIdentity(expected, actual, BUFFER_SIZE) );
+        }
+    #else
+        skip();
+    #endif
 }
 
 /*!
-	@brief 超過サイズバッファへの読み込みテスト
+    @brief 超過サイズバッファへの読み込みテスト
 */
 test(RandomSlot_ReadOverflow)
 {
-	enum { BUFFER_SIZE = 31 };
+    enum { BUFFER_SIZE = 31 };
 
-	// Setup ===================================================================
-	const int slot = random(
-		PLEN2::ExternalEEPROM::SLOT_BEGIN(),
-		PLEN2::ExternalEEPROM::SLOT_END()
-	);
+    // Setup ===================================================================
+    const uint16_t SLOT = getRandomSlot();
 
-	char data[BUFFER_SIZE] = { 0 };
+    uint8_t data[BUFFER_SIZE] = { 0 };
 
-	// Run =====================================================================
-	int expected = -1;
-	int actual   = PLEN2::ExternalEEPROM::readSlot(slot, data, BUFFER_SIZE);
+    // Run =====================================================================
+    int8_t expected = -1;
+    int8_t actual   = PLEN2::ExternalEEPROM::readSlot(SLOT, data, BUFFER_SIZE);
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    // Assert ==================================================================
+    assertEqual(expected, actual);
 }
 
 /*!
-	@brief 超過サイズバッファの書き込みテスト
+    @brief 超過サイズバッファの書き込みテスト
 */
 test(RandomSlot_WriteOverflow)
 {
-	enum { BUFFER_SIZE = 31 };
+    enum { BUFFER_SIZE = 31 };
 
-	// Setup ===================================================================
-	const int slot = random(
-		PLEN2::ExternalEEPROM::SLOT_BEGIN(), PLEN2::ExternalEEPROM::SLOT_END()
-	);
+    // Setup ===================================================================
+    const uint16_t SLOT = getRandomSlot();
 
-	char data[BUFFER_SIZE] = { 0 };
+    uint8_t data[BUFFER_SIZE] = { 0 };
 
-	// Run =====================================================================
-	int expected = -1;
-	int actual   = PLEN2::ExternalEEPROM::writeSlot(slot, data, BUFFER_SIZE);
+    // Run =====================================================================
+    int8_t expected = -1;
+    int8_t actual   = PLEN2::ExternalEEPROM::writeSlot(SLOT, data, BUFFER_SIZE);
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    // Assert ==================================================================
+    assertEqual(expected, actual);
 }
 
 /*!
-	@brief 超過スロットの読み込みテスト
+    @brief 超過スロットの読み込みテスト
 */
 test(SlotOverflow_Read)
 {
-	enum { BUFFER_SIZE = 1 };
+    enum { BUFFER_SIZE = 1 };
 
-	// Setup ===================================================================
-	const int slot = PLEN2::ExternalEEPROM::SLOT_END();
-	char data[BUFFER_SIZE] = { 0 };
+    // Setup ===================================================================
+    const uint16_t SLOT = PLEN2::ExternalEEPROM::SLOT_END;
 
-	// Run =====================================================================
-	int expected = -1;
-	int actual   = PLEN2::ExternalEEPROM::readSlot(slot, data, BUFFER_SIZE);
+    uint8_t data[BUFFER_SIZE] = { 0 };
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    // Run =====================================================================
+    int8_t expected = -1;
+    int8_t actual   = PLEN2::ExternalEEPROM::readSlot(SLOT, data, BUFFER_SIZE);
+
+    // Assert ==================================================================
+    assertEqual(expected, actual);
 }
 
 /*!
-	@brief 超過スロットへの書き込みテスト
+    @brief 超過スロットへの書き込みテスト
 */
 test(SlotOverflow_Write)
 {
-	enum { BUFFER_SIZE = 1 };
+    enum { BUFFER_SIZE = 1 };
 
-	// Setup ===================================================================
-	const int slot = PLEN2::ExternalEEPROM::SLOT_END();
-	char data[BUFFER_SIZE] = { 0 };
+    // Setup ===================================================================
+    const uint16_t SLOT = PLEN2::ExternalEEPROM::SLOT_END;
 
-	// Run =====================================================================
-	int expected = -1;
-	int actual   = PLEN2::ExternalEEPROM::writeSlot(slot, data, BUFFER_SIZE);
+    uint8_t data[BUFFER_SIZE] = { 0 };
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    // Run =====================================================================
+    int8_t expected = -1;
+    int8_t actual   = PLEN2::ExternalEEPROM::writeSlot(SLOT, data, BUFFER_SIZE);
+
+    // Assert ==================================================================
+    assertEqual(expected, actual);
 }
 
 
 /*!
-	@brief アプリケーション・エントリポイント
+    @brief アプリケーション・エントリポイント
 */
 void setup()
 {
-	randomSeed(
-		analogRead(PLEN2::Pin::RANDOM_DEVICE_IN())
-	);
+    randomSeed( analogRead(PLEN2::Pin::RANDOM_DEVICE_IN) );
 
-	while (!Serial); // for the Arduino Leonardo/Micro only.
+    PLEN2::ExternalEEPROM::begin();
 
-	Serial.print(F("# Test : "));
-	Serial.println(__FILE__);
+    while (!Serial); // for the Arduino Leonardo/Micro only.
+
+    Serial.print(F("# Test : "));
+    Serial.println(__FILE__);
 }
 
 void loop()
 {
-	Test::run();
+    Test::run();
 }

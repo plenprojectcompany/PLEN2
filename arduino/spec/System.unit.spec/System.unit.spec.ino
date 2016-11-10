@@ -2,50 +2,47 @@
 
 
 #include <ArduinoUnit.h>
+
 #include "System.h"
 
 
 /*!
-	@brief テストケース選択用プリプロセスマクロ
+    @brief テストケース選択用プリプロセスマクロ
 */
 #define TEST_USER true //!< ユーザテストについても実行します。
 
 
-namespace
-{
-	PLEN2::System system;
-}
-
-
 /*!
-	@brief システム構成のダンプテスト
+    @brief システム構成のダンプテスト
 
-	ユーザによる目視でのテストです。
+    ユーザによる目視でのテストです。
 */
 test(Dump)
 {
-	#if TEST_USER
-		PLEN2::System::dump();
+    #if TEST_USER
+        PLEN2::System::dump();
 
-		pass();
-	#else
-		skip();
-	#endif
+        pass();
+    #else
+        skip();
+    #endif
 }
 
 
 /*!
-	@brief アプリケーション・エントリポイント
+    @brief アプリケーション・エントリポイント
 */
 void setup()
 {
-	while (!Serial); // for the Arduino Leonardo/Micro only.
+    PLEN2::System::begin();
 
-	Serial.print(F("# Test : "));
-	Serial.println(__FILE__);
+    while (!Serial); // for the Arduino Leonardo/Micro only.
+
+    Serial.print(F("# Test : "));
+    Serial.println(__FILE__);
 }
 
 void loop()
 {
-	Test::run();
+    Test::run();
 }

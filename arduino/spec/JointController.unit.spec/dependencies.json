@@ -4,6 +4,7 @@
 		"JointController",
 		"Pin",
 		"System",
-		"Profiler"
+		"Profiler",
+		"BuildConfig"
 	]
 }

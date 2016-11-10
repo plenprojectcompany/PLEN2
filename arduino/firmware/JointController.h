@@ -1,270 +1,302 @@
 /*!
-	@file      JointController.h
-	@brief     Management class of joints.
-	@author    Kazuyuki TAKASE
-	@copyright The MIT License - http://opensource.org/licenses/mit-license.php
+    @file      JointController.h
+    @brief     Management class of joints.
+    @author    Kazuyuki TAKASE
+    @copyright The MIT License - http://opensource.org/licenses/mit-license.php
 */
+
+#pragma once
 
 #ifndef PLEN2_JOINT_CONTROLLER_H
 #define PLEN2_JOINT_CONTROLLER_H
 
+
+#include <stdint.h>
+
+#include "BuildConfig.h"
+
 namespace PLEN2
 {
-	class JointController;
+    class JointController;
 }
 
 /*!
-	@brief Management class of joints
+    @brief Management class of joints
 
-	In Atmega32u4, one timer can output 3 PWM signals at a time.
-	The MCU can control 24 servos by connecting 3bit multiplexer in each signal output lines.
-
-	@note
-	There is information about PLEN1.4's configuration below.
-	@code
-	enum {
-		SUM = 24, //!< Summation of the servos controllable.
-
-		ANGLE_MIN     = -600, //!< Min angle of the servos.
-		ANGLE_MAX     =  600, //!< Max angle of the servos.
-		ANGLE_NEUTRAL =    0  //!< Neutral angle of the servos.
-	};
-
-	//! @brief PWM width that to make min angle
-	inline static const int PWM_MIN()     { return 492;  }
-
-	//! @brief PWM width that to make max angle
-	inline static const int PWM_MAX()     { return 816;  }
-
-	//! @brief PWM width that to make neutral angle
-	inline static const int PWM_NEUTRAL() { return 654;  }
-	@endcode
+    In Atmega32u4, one timer can output 3 PWM signals at a time.
+    The MCU can control 24 servos by connecting 3bit multiplexer in each signal output lines.
 */
 class PLEN2::JointController
 {
 public:
-	enum {
-		SUM = 24, //!< Summation of the servos controllable.
+    enum JOINT_INDEX
+    {
+        LEFT_SHOULDER_PITCH  = 0,
+        LEFT_THIGH_YAW       = 1,
+        LEFT_SHOULDER_ROLL   = 2,
+        LEFT_ELBOW_ROLL      = 3,
+        LEFT_THIGH_ROLL      = 4,
+        LEFT_THIGH_PITCH     = 5,
+        LEFT_KNEE_PITCH      = 6,
+        LEFT_FOOT_PITCH      = 7,
+        LEFT_FOOT_ROLL       = 8,
+        RIGHT_SHOULDER_PITCH = 12,
+        RIGHT_THIGH_YAW      = 13,
+        RIGHT_SHOULDER_ROLL  = 14,
+        RIGHT_ELBOW_ROLL     = 15,
+        RIGHT_THIGH_ROLL     = 16,
+        RIGHT_THIGH_PITCH    = 17,
+        RIGHT_KNEE_PITCH     = 18,
+        RIGHT_FOOT_PITCH     = 19,
+        RIGHT_FOOT_ROLL      = 20
+    };
 
-		ANGLE_MIN     = -700, //!< Min angle of the servos.
-		ANGLE_MAX     =  700, //!< Max angle of the servos.
-		ANGLE_NEUTRAL =    0  //!< Neutral angle of the servos.
-	};
+    enum BASIC_JOINT_SETTINGS
+    {
+        JOINTS_SUM = 24, //!< Summation of the servos controllable.
+
+        #if TARGET_PLEN14
+            ANGLE_MIN     = -600, //!< Min angle of the servos.
+            ANGLE_MAX     =  600, //!< Max angle of the servos.
+            ANGLE_NEUTRAL =    0  //!< Neutral angle of the servos.
+        #endif
+
+        #if TARGET_PLEN20
+            ANGLE_MIN     = -700, //!< Min angle of the servos.
+            ANGLE_MAX     =  700, //!< Max angle of the servos.
+            ANGLE_NEUTRAL =    0  //!< Neutral angle of the servos.
+        #endif
+    };
 
 private:
-	//! @brief Initialized flag's address on internal EEPROM
-	inline static const int INIT_FLAG_ADDRESS()     { return 0; }
+    //! @brief Initialized flag's address on internal EEPROM
+    enum { INIT_FLAG_ADDRESS = 0 };
 
-	//! @brief Initialized flag's value
-	inline static const int INIT_FLAG_VALUE()       { return 2; }
+    //! @brief Initialized flag's value
+    enum { INIT_FLAG_VALUE = 2 };
 
-	//! @brief Head-address of joint settings on internal EEPROM
-	inline static const int SETTINGS_HEAD_ADDRESS() { return 1; }
+    //! @brief Head-address of joint settings on internal EEPROM
+    enum { SETTINGS_HEAD_ADDRESS = 1 };
 
-	/*!
-		@brief Management class of joint setting
-	*/
-	class JointSetting
-	{
-	public:
-		int MIN;  //!< Setting about min angle.
-		int MAX;  //!< Setting about max angle.
-		int HOME; //!< Setting about home angle.
+    /*!
+        @brief Management class of joint setting
+    */
+    class JointSetting
+    {
+    public:
+        int16_t MIN;  //!< Setting about min angle.
+        int16_t MAX;  //!< Setting about max angle.
+        int16_t HOME; //!< Setting about home angle.
 
-		/*!
-			@brief Constructor
-		*/
-		JointSetting()
-			: MIN(ANGLE_MIN)
-			, MAX(ANGLE_MAX)
-			, HOME(ANGLE_NEUTRAL)
-		{
-			// noop.
-		}
-	};
+        /*!
+            @brief Constructor
+        */
+        JointSetting()
+            : MIN(ANGLE_MIN)
+            , MAX(ANGLE_MAX)
+            , HOME(ANGLE_NEUTRAL)
+        {
+            // noop.
+        }
+    };
 
-	JointSetting m_SETTINGS[SUM];
+    JointSetting m_SETTINGS[JOINTS_SUM];
 
 public:
-	/*!
-		@brief Management class (as namespace) of multiplexer
+    /*!
+        @brief Management class (as namespace) of multiplexer
 
-		@note
-		The methods the class has are more accurate that there are in the namespace named Multiplexer,
-		but C++'s idiom doesn't accept syntax that described before.
-	*/
-	class Multiplexer {
-	public:
-		//! @brief Summation of multiplexers
-		inline static const int SUM()              { return 3; }
+        @note
+        The methods of the class are more accurate than those in the namespace named Multiplexer,
+        but C++'s idiom doesn't accept the syntax that was described before.
+    */
+    class Multiplexer
+    {
+    public:
+        //! @brief Summation of multiplexers
+        enum { SUM = 3 };
 
-		//! @brief Number of controllable lines by a multiplexer
-		inline static const int SELECTABLE_LINES() { return 8; }
-	};
+        //! @brief Number of controllable lines by a multiplexer
+        enum { SELECTABLE_LINES = 8 };
+    };
 
-	//! @brief PWM width that to make min angle
-	inline static const int PWM_MIN()     { return 480;  }
+    #if TARGET_PLEN14
+        //! @brief PWM width that to make min angle
+        enum { PWM_MIN = 492 };
 
-	//! @brief PWM width that to make max angle
-	inline static const int PWM_MAX()     { return 820;  }
+        //! @brief PWM width that to make max angle
+        enum { PWM_MAX = 816 };
 
-	//! @brief PWM width that to make neutral angle
-	inline static const int PWM_NEUTRAL() { return 650;  }
+        //! @brief PWM width that to make neutral angle
+        enum { PWM_NEUTRAL = 654 };
+    #endif
 
-	/*!
-		@brief Finished flag of PWM output procedure 1 cycle
+    #if TARGET_PLEN20
+        //! @brief PWM width that to make min angle
+        enum { PWM_MIN = 480 };
 
-		@attention
-		The instance should be a private member normally.
-		It is a public member because it is only way to access from Timer 1 overflow interruption vector,
-		so you must not access it from other functions basically.
-	*/
-	volatile static bool m_1cycle_finished;
+        //! @brief PWM width that to make max angle
+        enum { PWM_MAX = 820 };
 
-	/*!
-		@brief PWM buffer
+        //! @brief PWM width that to make neutral angle
+        enum { PWM_NEUTRAL = 650 };
+    #endif
 
-		@attention
-		The instance should be a private member normally.
-		It is a public member because it is only way to access from Timer 1 overflow interruption vector,
-		so you must not access it from other functions basically.
-	*/
-	static unsigned int m_pwms[SUM];
+    /*!
+        @brief Finished flag of PWM output procedure 1 cycle
 
-	/*!
-		@brief Constructor
-	*/
-	JointController();
+        @attention
+        The instance should be a private member normally.
+        It is a public member because it is the only way to access it from Timer 1 overflow interruption vector,
+        so you must not access it from other functions basically.
+    */
+    volatile static bool m_1cycle_finished;
 
-	/*!
-		@brief Load the joint settings
+    /*!
+        @brief PWM buffer
 
-		The method reads joint settings from internal EEPROM.
-		If the EEPROM has no settings, the method also writes the default values.
+        @attention
+        The instance should be a private member normally.
+        It is a public member because it is the only way to access it from Timer 1 overflow interruption vector,
+        so you must not access it from other functions basically.
+    */
+    static uint16_t m_pwms[JOINTS_SUM];
 
-		@sa
-		JointController.cpp::Shared::m_SETTINGS_INITIAL
+    /*!
+        @brief Constructor
+    */
+    JointController();
 
-		@attention
-		The method should call in constructor normally,
-		but initialized timing of any interruption is indefinite, so might get deadlock.
-		(The method uses serial communication and internal EEPROM accessing, so it happens interruption.)
-	*/
-	void loadSettings();
+    /*!
+        @brief Load the joint settings
 
-	/*!
-		@brief Reset the joint settings
+        The method reads joint settings from internal EEPROM.
+        If the EEPROM has no settings, the method also writes the default values.
 
-		Write default settings to internal EEPROM.
-	*/
-	void resetSettings();
+        @sa
+        JointController.cpp::Shared::m_SETTINGS_INITIAL
 
-	/*!
-		@brief Get min angle of the joint given
+        @attention
+        The method should be called in constructor normally,
+        but initialized timing of any interruption is indefinite, so it might get deadlocked.
+        (The method uses serial communication and internal EEPROM access, so interruption happens.)
+    */
+    void loadSettings();
 
-		@param [in] joint_id Please set joint id you want to get min angle.
+    /*!
+        @brief Reset the joint settings
 
-		@return Reference of min angle a joint expressed by **joint_id** has.
-		@retval -32768 Argument error. (**joint_id** is invalid.)
-	*/
-	const int& getMinAngle(unsigned char joint_id);
+        Write default settings to internal EEPROM.
+    */
+    void resetSettings();
 
-	/*!
-		@brief Get max angle of the joint given
+    /*!
+        @brief Get min angle of the joint given
 
-		@param [in] joint_id Please set joint id you want to get max angle.
+        @param [in] joint_id Please set the joint id from which you want to get min angle.
 
-		@return Reference of max angle a joint expressed by **joint_id** has.
-		@retval -32768 Argument error. (**joint_id** is invalid.)
-	*/
-	const int& getMaxAngle(unsigned char joint_id);
+        @return Reference of min angle of a joint described by **joint_id**.
+        @retval -32768 Argument error. (**joint_id** is invalid.)
+    */
+    const int16_t& getMinAngle(uint8_t joint_id);
 
-	/*!
-		@brief Get home angle of the joint given
+    /*!
+        @brief Get max angle of the joint given
 
-		@param [in] joint_id Please set joint id you want to get home angle.
+        @param [in] joint_id Please set the joint id from which you want to get max angle.
 
-		@return Reference of home angle a joint expressed by **joint_id** has.
-		@retval -32768 Argument error. (**joint_id** is invalid.)
-	*/
-	const int& getHomeAngle(unsigned char joint_id);
+        @return Reference of max angle of a joint described by **joint_id**.
+        @retval -32768 Argument error. (**joint_id** is invalid.)
+    */
+    const int16_t& getMaxAngle(uint8_t joint_id);
 
-	/*!
-		@brief Set min angle of the joint given
+    /*!
+        @brief Get home angle of the joint given
 
-		@param [in] joint_id Please set joint id you want to define min angle.
-		@param [in] angle    Please set angle that has steps of degree 1/10.
+        @param [in] joint_id Please set the joint id from which you want to get home angle.
 
-		@return Result
-	*/
-	bool setMinAngle(unsigned char joint_id, int angle);
+        @return Reference of home angle a joint expressed by **joint_id** has.
+        @retval -32768 Argument error. (**joint_id** is invalid.)
+    */
+    const int16_t& getHomeAngle(uint8_t joint_id);
 
-	/*!
-		@brief Set max angle of the joint given
+    /*!
+        @brief Set min angle of the joint given
 
-		@param [in] joint_id Please set joint id you want to define max angle.
-		@param [in] angle    Please set angle that has steps of degree 1/10.
+        @param [in] joint_id Please set the joint id from which you want to define the min angle.
+        @param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@return Result
-	*/
-	bool setMaxAngle(unsigned char joint_id, int angle);
+        @return Result
+    */
+    bool setMinAngle(uint8_t joint_id, int16_t angle);
 
-	/*!
-		@brief Set home angle of the joint given
+    /*!
+        @brief Set max angle of the joint given
 
-		@param [in] joint_id Please set joint id you want to define home angle.
-		@param [in] angle    Please set angle that has steps of degree 1/10.
+        @param [in] joint_id Please set the joint id from which you want to define the max angle.
+        @param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@return Result
-	*/
-	bool setHomeAngle(unsigned char joint_id, int angle);
+        @return Result
+    */
+    bool setMaxAngle(uint8_t joint_id, int16_t angle);
 
-	/*!
-		@brief Set angle of the joint given
+    /*!
+        @brief Set home angle of the joint given
 
-		@param [in] joint_id Please set joint id you want to set angle.
-		@param [in] angle    Please set angle that has steps of degree 1/10.
+        @param [in] joint_id Please set the joint id from which you want to define the home angle.
+        @param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@return Result
+        @return Result
+    */
+    bool setHomeAngle(uint8_t joint_id, int16_t angle);
 
-		@attention
-		<b>angle</b> might not be setting actually.
-		It is setting after trimming by user defined min-max value or servo's range,
-		so please consider it when writing a unit test.
-	*/
-	bool setAngle(unsigned char joint_id, int angle);
+    /*!
+        @brief Set angle of the joint given
 
-	/*!
-		@brief Set angle to "angle-diff + home-angle" of the joint given
+        @param [in] joint_id Please set the joint id from which you want to set the angle.
+        @param [in] angle    Please set angle that has steps of degree 1/10.
 
-		@param [in] joint_id   Please set joint id you want to set angle-diff.
-		@param [in] angle_diff Please set angle-diff that has steps of degree 1/10.
+        @return Result
 
-		@return Result
+        @attention
+        <b>angle</b> might not be set actually.
+        It is set after trimming by user defined min-max value or servo's range,
+        so please consider it when writing a unit test.
+    */
+    bool setAngle(uint8_t joint_id, int16_t angle);
 
-		@attention
-		<b>angle_diff</b> might not be setting actually.
-		It is setting after trimming by user defined min-max value or servo's range,
-		so please consider it when writing a unit test.
-	*/
-	bool setAngleDiff(unsigned char joint_id, int angle_diff);
+    /*!
+        @brief Set angle to "angle-diff + home-angle" of the joint given
 
-	/*!
-		@brief Dump the joint settings
+        @param [in] joint_id   Please set the joint id from which you want to set the angle-diff.
+        @param [in] angle_diff Please set angle-diff that has steps of degree 1/10.
 
-		Output result like JSON format below.
-		@code
-		[
-			{
-				"max": <integer>,
-				"min": <integer>,
-				"home": <integer>
-			},
-			...
-		]
-		@endcode
-	*/
-	void dump();
+        @return Result
+
+        @attention
+        <b>angle_diff</b> might not be set actually.
+        It is set after trimming by user defined min-max value or servo's range,
+        so please consider it when writing a unit test.
+    */
+    bool setAngleDiff(uint8_t joint_id, int16_t angle_diff);
+
+    /*!
+        @brief Dump the joint settings
+
+        Output result in JSON format as below.
+        @code
+        [
+            {
+                "@device": <integer>,
+                "max": <integer>,
+                "min": <integer>,
+                "home": <integer>
+            },
+            ...
+        ]
+        @endcode
+    */
+    void dump();
 };
 
 #endif // PLEN2_JOINT_CONTROLLER_H

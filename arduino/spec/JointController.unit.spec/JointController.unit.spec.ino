@@ -2,395 +2,446 @@
 
 
 #include <EEPROM.h>
-
 #include <ArduinoUnit.h>
+
 #include "Pin.h"
+#include "System.h"
 #include "JointController.h"
 
 
 /*!
-	@brief テストケース選択用プリプロセスマクロ
+    @brief テストケース選択用プリプロセスマクロ
 */
-
-#define TEST_USER true //!< ユーザテストについても実行します。
+#define TEST_USER false //!< ユーザテストについても実行します。
 
 
 namespace
 {
-	PLEN2::JointController joint_ctrl;
+    using namespace PLEN2;
 
-	unsigned int angle2PWM(unsigned char joint_id, int angle)
-	{
-		angle = constrain(
-			angle,
-			joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id)
-		);
+    JointController joint_ctrl;
 
-		unsigned int pwm = map(
-			angle,
-			PLEN2::JointController::ANGLE_MIN, PLEN2::JointController::ANGLE_MAX,
-			PLEN2::JointController::PWM_MIN(),   PLEN2::JointController::PWM_MAX()
-		);
+    const uint8_t getRandomJoint()
+    {
+        return random(JointController::JOINTS_SUM);
+    }
 
-		return pwm;
-	}
+    const int16_t getRandomAngle_MIN_max(uint8_t joint_id)
+    {
+        return random(
+            JointController::ANGLE_MIN, joint_ctrl.getMaxAngle(joint_id)
+        );
+    }
 
-	unsigned int angleDiff2PWM(unsigned char joint_id, int angle_diff)
-	{
-		int angle = constrain(
-			angle_diff + joint_ctrl.getHomeAngle(joint_id),
-			joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id)
-		);
+    const int16_t getRandomAngle_min_MAX(uint8_t joint_id)
+    {
+        return random(
+            joint_ctrl.getMinAngle(joint_id) + 1, JointController::ANGLE_MAX + 1
+        );
+    }
 
-		unsigned int pwm = map(
-			angle,
-			PLEN2::JointController::ANGLE_MIN, PLEN2::JointController::ANGLE_MAX,
-			PLEN2::JointController::PWM_MIN(),   PLEN2::JointController::PWM_MAX()
-		);
+    const int16_t getRandomAngle_min_max(uint8_t joint_id)
+    {
+        return random(
+            joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id) + 1
+        );
+    }
 
-		return pwm;
-	}
+    const int16_t getRandomAngleDiff_min_max(uint8_t joint_id)
+    {
+        return random(
+            joint_ctrl.getMinAngle(joint_id) - joint_ctrl.getHomeAngle(joint_id),
+            joint_ctrl.getMaxAngle(joint_id) - joint_ctrl.getHomeAngle(joint_id) + 1
+        );
+    }
+
+    uint16_t angle2PWM(uint8_t joint_id, int16_t angle)
+    {
+        angle = constrain(
+            angle,
+            joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id)
+        );
+
+        uint16_t pwm = map(
+            angle,
+            JointController::ANGLE_MIN, JointController::ANGLE_MAX,
+            JointController::PWM_MIN,   JointController::PWM_MAX
+        );
+
+        return pwm;
+    }
+
+    uint16_t angleDiff2PWM(uint8_t joint_id, int16_t angle_diff)
+    {
+        int16_t angle = constrain(
+            angle_diff + joint_ctrl.getHomeAngle(joint_id),
+            joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id)
+        );
+
+        uint16_t pwm = map(
+            angle,
+            JointController::ANGLE_MIN, JointController::ANGLE_MAX,
+            JointController::PWM_MIN,   JointController::PWM_MAX
+        );
+
+        return pwm;
+    }
 }
 
 
 /*!
-	@brief ランダムに選択した関節への、角度最小値の設定テスト
+    @brief ランダムに選択した関節への、角度最小値の設定テスト
 */
 test(RandomJoint_SetMinAngle)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = random(PLEN2::JointController::SUM);
+    // Setup ==================================================================
+    uint8_t joint_id = getRandomJoint();
 
-	int expected = random(
-		PLEN2::JointController::ANGLE_MIN, joint_ctrl.getMaxAngle(joint_id)
-	);
+    int16_t expected = getRandomAngle_MIN_max(joint_id);
+    int16_t actual;
 
-	// Run =====================================================================
-	joint_ctrl.setMinAngle(joint_id, expected);
-	joint_ctrl.loadSettings();
-	int actual = joint_ctrl.getMinAngle(joint_id);
+    // Run ====================================================================
+    joint_ctrl.setMinAngle(joint_id, expected);
+    joint_ctrl.loadSettings();
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    actual = joint_ctrl.getMinAngle(joint_id);
+
+    // Assert =================================================================
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief 全ての関節への、角度最小値の設定テスト
+    @brief 全ての関節への、角度最小値の設定テスト
 */
 test(AllJoint_SetMinAngle)
 {
-	for (unsigned char joint_id = 0;
-		               joint_id < PLEN2::JointController::SUM;
-		               joint_id++
-	)
-	{
-		// Setup ===============================================================
-		int expected = random(
-			PLEN2::JointController::ANGLE_MIN, joint_ctrl.getMaxAngle(joint_id)
-		);
+    for (uint8_t joint_id = 0;
+                 joint_id < PLEN2::JointController::JOINTS_SUM;
+                 joint_id++
+    )
+    {
+        // Setup ==============================================================
+        int16_t expected = getRandomAngle_MIN_max(joint_id);
+        int16_t actual;
 
-		// Run =================================================================
-		joint_ctrl.setMinAngle(joint_id, expected);
-		joint_ctrl.loadSettings();
-		int actual = joint_ctrl.getMinAngle(joint_id);
+        // Run ================================================================
+        joint_ctrl.setMinAngle(joint_id, expected);
+        joint_ctrl.loadSettings();
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        actual = joint_ctrl.getMinAngle(joint_id);
+
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
+
 /*!
-	@brief ランダムに選択した関節への、角度最大値の設定テスト
+    @brief ランダムに選択した関節への、角度最大値の設定テスト
 */
 test(RandomJoint_SetMaxAngle)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = random(PLEN2::JointController::SUM);
+    // Setup ==================================================================
+    uint8_t joint_id = getRandomJoint();
 
-	int expected = random(
-		joint_ctrl.getMinAngle(joint_id) + 1, PLEN2::JointController::ANGLE_MAX + 1
-	);
+    int16_t expected = getRandomAngle_min_MAX(joint_id);
+    int16_t actual;
 
-	// Run =====================================================================
-	joint_ctrl.setMaxAngle(joint_id, expected);
-	joint_ctrl.loadSettings();
-	int actual = joint_ctrl.getMaxAngle(joint_id);
+    // Run ====================================================================
+    joint_ctrl.setMaxAngle(joint_id, expected);
+    joint_ctrl.loadSettings();
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    actual = joint_ctrl.getMaxAngle(joint_id);
+
+    // Assert =================================================================
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief 全ての関節への、角度最大値の設定テスト
+    @brief 全ての関節への、角度最大値の設定テスト
 */
 test(AllJoint_SetMaxAngle)
 {
-	for (unsigned char joint_id = 0;
-		               joint_id < PLEN2::JointController::SUM;
-		               joint_id++
-	)
-	{
-		// Setup ===============================================================
-		int expected = random(
-			joint_ctrl.getMinAngle(joint_id) + 1, PLEN2::JointController::ANGLE_MAX + 1
-		);
+    for (uint8_t joint_id = 0;
+                 joint_id < PLEN2::JointController::JOINTS_SUM;
+                 joint_id++
+    )
+    {
+        // Setup ==============================================================
+        int16_t expected = getRandomAngle_min_MAX(joint_id);
+        int16_t actual;
 
-		// Run =================================================================
-		joint_ctrl.setMaxAngle(joint_id, expected);
-		joint_ctrl.loadSettings();
-		int actual = joint_ctrl.getMaxAngle(joint_id);
+        // Run ================================================================
+        joint_ctrl.setMaxAngle(joint_id, expected);
+        joint_ctrl.loadSettings();
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        actual = joint_ctrl.getMaxAngle(joint_id);
+
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
+
 /*!
-	@brief ランダムに選択した関節への、角度初期値の設定テスト
+    @brief ランダムに選択した関節への、角度初期値の設定テスト
 */
 test(RandomJoint_SetHomeAngle)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = random(PLEN2::JointController::SUM);
+    // Setup ==================================================================
+    uint8_t joint_id = getRandomJoint();
 
-	int expected = random(
-		joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id) + 1
-	);
+    int16_t expected = getRandomAngle_min_max(joint_id);
+    int16_t actual;
 
-	// Run =====================================================================
-	joint_ctrl.setHomeAngle(joint_id, expected);
-	joint_ctrl.loadSettings();
-	int actual = joint_ctrl.getHomeAngle(joint_id);
+    // Run ====================================================================
+    joint_ctrl.setHomeAngle(joint_id, expected);
+    joint_ctrl.loadSettings();
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    actual = joint_ctrl.getHomeAngle(joint_id);
+
+    // Assert =================================================================
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief 全ての関節への、角度初期値の設定テスト
+    @brief 全ての関節への、角度初期値の設定テスト
 */
 test(AllJoint_SetHomeAngle)
 {
-	for (unsigned char joint_id = 0;
-		               joint_id < PLEN2::JointController::SUM;
-		               joint_id++
-	)
-	{
-		// Setup ===============================================================
-		int expected = random(
-			joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id) + 1
-		);
+    for (uint8_t joint_id = 0;
+                 joint_id < PLEN2::JointController::JOINTS_SUM;
+                 joint_id++
+    )
+    {
+        // Setup ==============================================================
+        int16_t expected = getRandomAngle_min_max(joint_id);
+        int16_t actual;
 
-		// Run =================================================================
-		joint_ctrl.setHomeAngle(joint_id, expected);
-		joint_ctrl.loadSettings();
-		int actual = joint_ctrl.getHomeAngle(joint_id);
+        // Run ================================================================
+        joint_ctrl.setHomeAngle(joint_id, expected);
+        joint_ctrl.loadSettings();
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        actual = joint_ctrl.getHomeAngle(joint_id);
+
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
+
 /*!
-	@brief ランダムに選択した関節への、角度の設定テスト
+    @brief ランダムに選択した関節への、角度の設定テスト
 */
 test(RandomJoint_SetAngle)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = random(PLEN2::JointController::SUM);
+    // Setup ==================================================================
+    // joint_ctrl.resetSettings();
 
-	int angle = random(
-		joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id) + 1
-	);
+    uint8_t joint_id = getRandomJoint();
+    int16_t angle = getRandomAngle_min_max(joint_id);
 
-	unsigned int expected = angle2PWM(joint_id, angle);
+    uint16_t expected = angle2PWM(joint_id, angle);
+    uint16_t actual;
 
-	// Run =====================================================================
-	joint_ctrl.setAngle(joint_id, angle);
-	unsigned int actual = PLEN2::JointController::m_pwms[joint_id];
+    // Run ====================================================================
+    joint_ctrl.setAngle(joint_id, angle);
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    actual = PLEN2::JointController::m_pwms[joint_id];
+
+    // Assert =================================================================
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief 全ての関節への、角度の設定テスト
+    @brief 全ての関節への、角度の設定テスト
 */
 test(AllJoint_SetAngle)
 {
-	for (unsigned char joint_id = 0; joint_id < PLEN2::JointController::SUM; joint_id++)
-	{
-		// Setup ===============================================================
-		int angle = random(
-			joint_ctrl.getMinAngle(joint_id), joint_ctrl.getMaxAngle(joint_id) + 1
-		);
+    for (uint8_t joint_id = 0;
+                 joint_id < PLEN2::JointController::JOINTS_SUM;
+                 joint_id++
+    )
+    {
+        // Setup ==============================================================
+        int16_t angle = getRandomAngle_min_max(joint_id);
 
-		unsigned int expected = angle2PWM(joint_id, angle);
+        uint16_t expected = angle2PWM(joint_id, angle);
+        uint16_t actual;
 
-		// Run =================================================================
-		joint_ctrl.setAngle(joint_id, angle);
-		unsigned int actual = PLEN2::JointController::m_pwms[joint_id];
+        // Run ================================================================
+        joint_ctrl.setAngle(joint_id, angle);
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        actual = PLEN2::JointController::m_pwms[joint_id];
+
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
+
 /*!
-	@brief ランダムに選択した関節への、角度差分の設定テスト
+    @brief ランダムに選択した関節への、角度差分の設定テスト
 */
 test(RandomJoint_SetAngleDiff)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = random(PLEN2::JointController::SUM);
-	
-	int angle_diff = random(
-		joint_ctrl.getMinAngle(joint_id) - joint_ctrl.getHomeAngle(joint_id),
-		joint_ctrl.getMaxAngle(joint_id) - joint_ctrl.getHomeAngle(joint_id) + 1
-	);
+    // Setup ==================================================================
+    uint8_t joint_id = getRandomJoint();
+    int16_t angle_diff = getRandomAngleDiff_min_max(joint_id);
 
-	unsigned int expected = angleDiff2PWM(joint_id, angle_diff);
+    uint16_t expected = angleDiff2PWM(joint_id, angle_diff);
+    uint16_t actual;
 
-	// Run =====================================================================
-	joint_ctrl.setAngleDiff(joint_id, angle_diff);
-	unsigned int actual = PLEN2::JointController::m_pwms[joint_id];
+    // Run ====================================================================
+    joint_ctrl.setAngleDiff(joint_id, angle_diff);
 
-	// Assert ==================================================================
-	assertEqual(expected, actual);
+    actual = PLEN2::JointController::m_pwms[joint_id];
+
+    // Assert =================================================================
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief 全ての関節への、角度差分の設定テスト
+    @brief 全ての関節への、角度差分の設定テスト
 */
 test(AllJoint_SetAngleDiff)
 {
-	for (unsigned char joint_id = 0;
-		               joint_id < PLEN2::JointController::SUM;
-		               joint_id++
-	)
-	{
-		// Setup ===============================================================
-		int angle_diff = random(
-			joint_ctrl.getMinAngle(joint_id) - joint_ctrl.getHomeAngle(joint_id),
-			joint_ctrl.getMaxAngle(joint_id) - joint_ctrl.getHomeAngle(joint_id) + 1
-		);
+    // joint_ctrl.resetSettings();
 
-		unsigned int expected = angleDiff2PWM(joint_id, angle_diff);
+    for (uint8_t joint_id = 0;
+                 joint_id < PLEN2::JointController::JOINTS_SUM;
+                 joint_id++
+    )
+    {
+        // Setup ==============================================================
+        int16_t angle_diff = getRandomAngleDiff_min_max(joint_id);
 
-		// Run =================================================================
-		joint_ctrl.setAngleDiff(joint_id, angle_diff);
-		unsigned int actual = PLEN2::JointController::m_pwms[joint_id];
+        uint16_t expected = angleDiff2PWM(joint_id, angle_diff);
+        uint16_t actual;
 
-		// Assert ==============================================================
-		assertEqual(expected, actual);
-	}
+        // Run ================================================================
+        joint_ctrl.setAngleDiff(joint_id, angle_diff);
+
+        actual = PLEN2::JointController::m_pwms[joint_id];
+
+        // Assert =============================================================
+        assertEqual(expected, actual);
+    }
 }
 
+
 /*!
-	@brief 未定義関節への、各種取得メソッドのテスト
+    @brief 未定義関節への、各種取得メソッドのテスト
 */
 test(JointOverflow_GetMethods)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = PLEN2::JointController::SUM;
+    // Setup ==================================================================
+    uint8_t joint_id = PLEN2::JointController::JOINTS_SUM;
 
-	int expected = -32768;
-	int actual;
+    int16_t expected = -32768;
+    int16_t actual;
 
-	// Run & Assert ============================================================
-	actual = joint_ctrl.getMinAngle(joint_id);
-	assertEqual(expected, actual);
+    // Run & Assert ===========================================================
+    actual = joint_ctrl.getMinAngle(joint_id);
+    assertEqual(expected, actual);
 
-	actual = joint_ctrl.getMaxAngle(joint_id);
-	assertEqual(expected, actual);
+    actual = joint_ctrl.getMaxAngle(joint_id);
+    assertEqual(expected, actual);
 
-	actual = joint_ctrl.getHomeAngle(joint_id);
-	assertEqual(expected, actual);
+    actual = joint_ctrl.getHomeAngle(joint_id);
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief 未定義関節への、各種設定メソッドのテスト
+    @brief 未定義関節への、各種設定メソッドのテスト
 */
 test(JointOverflow_SetMethods)
 {
-	// Setup ===================================================================
-	unsigned char joint_id = PLEN2::JointController::SUM;
-	unsigned int  angle    = random();
+    // Setup ==================================================================
+    uint8_t joint_id = PLEN2::JointController::JOINTS_SUM;
+    int16_t angle = random();
 
-	bool expected = false;
-	bool actual;
+    bool expected = false;
+    bool actual;
 
-	// Run & Assert ============================================================
-	actual = joint_ctrl.setMinAngle(joint_id, angle);
-	assertEqual(expected, actual);
+    // Run & Assert ===========================================================
+    actual = joint_ctrl.setMinAngle(joint_id, angle);
+    assertEqual(expected, actual);
 
-	actual = joint_ctrl.setMaxAngle(joint_id, angle);
-	assertEqual(expected, actual);
+    actual = joint_ctrl.setMaxAngle(joint_id, angle);
+    assertEqual(expected, actual);
 
-	actual = joint_ctrl.setHomeAngle(joint_id, angle);
-	assertEqual(expected, actual);
+    actual = joint_ctrl.setHomeAngle(joint_id, angle);
+    assertEqual(expected, actual);
 
-	actual = joint_ctrl.setAngle(joint_id, angle);
-	assertEqual(expected, actual);
+    actual = joint_ctrl.setAngle(joint_id, angle);
+    assertEqual(expected, actual);
 
-	actual = joint_ctrl.setAngleDiff(joint_id, angle);
-	assertEqual(expected, actual);
+    actual = joint_ctrl.setAngleDiff(joint_id, angle);
+    assertEqual(expected, actual);
 }
 
+
 /*!
-	@brief タイマ1の動作テスト
+    @brief タイマ1の動作テスト
 */
 test(Timer1Attached)
 {
-	// Setup ===================================================================
-	unsigned char before = joint_ctrl.m_1cycle_finished = false;
+    // Setup ==================================================================
+    bool before = joint_ctrl.m_1cycle_finished = false;
 
-	// Run =====================================================================
-	delay(1000);
-	unsigned char after = joint_ctrl.m_1cycle_finished;
+    // Run ====================================================================
+    delay(1000);
 
-	// Assert ==================================================================
-	assertNotEqual(before, after);
+    bool after = joint_ctrl.m_1cycle_finished;
+
+    // Assert =================================================================
+    assertNotEqual(before, after);
 }
 
-/*!
-	@brief 関節設定のダンプテスト
 
-	ユーザによる目視でのテストです。
+/*!
+    @brief 関節設定のダンプテスト
+
+    ユーザによる目視でのテストです。
 */
 test(Dump)
 {
-	#if TEST_USER
-		joint_ctrl.dump();
+    #if TEST_USER
+        joint_ctrl.dump();
 
-		pass();
-	#else
-		skip();
-	#endif
+        pass();
+    #else
+        skip();
+    #endif
 }
 
 
 /*!
-	@brief アプリケーション・エントリポイント
+    @brief アプリケーション・エントリポイント
 */
 void setup()
 {
-	Serial.begin(2000000);
+    PLEN2::System::begin();
 
-	randomSeed(
-		analogRead(PLEN2::Pin::RANDOM_DEVICE_IN())
-	);
+    randomSeed( analogRead(PLEN2::Pin::RANDOM_DEVICE_IN) );
 
-	joint_ctrl.loadSettings();
-	joint_ctrl.resetSettings();
+    joint_ctrl.loadSettings();
+    joint_ctrl.resetSettings();
 
-	while (!Serial); // for the Arduino Leonardo/Micro only.
+    while (!Serial); // for the Arduino Leonardo/Micro only.
 
-	Serial.print(F("# Test : "));
-	Serial.println(__FILE__);
+    Serial.print(F("# Test : "));
+    Serial.println(__FILE__);
 }
 
 void loop()
 {
-	Test::run();
+    Test::run();
 }
