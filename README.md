@@ -1,5 +1,5 @@
 PLEN2 | PLEN Project Company Inc.
-================================================================================
+===============================================================================
 
 The world's first printable open-source humanoid.
 
@@ -13,13 +13,10 @@ The world's first printable open-source humanoid.
     - [Print Details](http://plen.jp/playground/wiki/specifications/index.html)
     - [Assembling Instructions](https://plen.jp/playground/wiki/tutorials/index.html)
 5. Configure home positions of joints. (This step is done by using
-   [PLEN Utils](https://github.com/plenprojectcompany/plen-ControlServer/releases/tag/v2.0.1).)
+   [PLEN Utils](https://github.com/plenprojectcompany/plen-ControlServer/releases).)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/tune)
-6. Write all motions. (Please check "/motions/*/" directory and use MotionInstaller.)
-   [See also...](https://plen.jp/playground/wiki/tutorials/motion_installer/simple_usage)
-    - In the future, this step will be included in the PLEN Utils.
-    - [MotionInstaller for Windows](https://github.com/plenprojectcompany/plen-MotionInstaller_Win/releases)
-    - [MotionInstaller for OSX](https://github.com/plenprojectcompany/plen-MotionInstaller_OSX/releases)
+6. Write all motions. (Please check "/motions/*/" directory and also use PLEN Utils.)
+   [See also...](https://plen.jp/playground/wiki/tutorials/plen2/motion)
 7. Hello, world where PLEN is!
 
 
@@ -33,24 +30,14 @@ The world's first printable open-source humanoid.
 
 ## Development Repositories
 ### 3D Model
-- [For SolidWorks](https://github.com/plenprojectcompany/plen-3DModel_SolidWorks)
-- [For Fusion360](https://github.com/plenprojectcompany/plen-3DModel_Fusion360)
-- [For Blender](https://github.com/plenprojectcompany/plen-3DModel_Blender)
-
-Blender is only used for to build high design quality parts. In the future, all parts will be uploaded.
-
-For example...
-
-- 3D Model (the whole body)
-- Face (head and barb)
-- Chest
+- [For Fusion 360](https://github.com/plenprojectcompany/plen-3DModel_Fusion360)
 
 ### Arduino
 We define here as the default repository of the firmware,
 and it's already installed on a control-board.
 
 If you are interested deeply in the firmware, please check
-[a development repository (branch)](https://github.com/Guvalif/plen-Firmware_Arduino/tree/v1.x).
+[a development repository](https://github.com/plenprojectcompany/plen-Firmware_Arduino).
 
 ### Android
 - [Controller and visual programming language](https://github.com/plenprojectcompany/plen-Scenography_Android)
@@ -62,7 +49,7 @@ If you are interested deeply in the firmware, please check
 
 ### Web Application
 - [Motion editor](https://github.com/plenprojectcompany/plen-MotionEditor_Web)
-- [Control server](https://github.com/plenprojectcompany/plen-ControlServer), A communication tool between HTTP and Serial
+- [Control server](https://github.com/plenprojectcompany/plen-ControlServer), a communication tool between HTTP and Serial
 
 ### Eagle
 > EAGLE PCB Design Software is the tool of choice for thousands of engineers worldwide.
@@ -72,6 +59,9 @@ If you are interested deeply in the firmware, please check
 
 - Printed circuit board CAD for [control-board](https://github.com/plenprojectcompany/plen-ControlBoard)
 - Printed circuit board CAD for [head-board](https://github.com/plenprojectcompany/plen-HeadBoard)
+
+### Etc...
+You can see the all open-source products on [the GitHub account](https://github.com/plenprojectcompany).
 
 
 ## Laws of PLEN
