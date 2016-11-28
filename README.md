@@ -20,6 +20,12 @@ The world's first printable open-source humanoid.
 7. Hello, world where PLEN is!
 
 
+## Recmmended Software Set
+- [Firmware for Arduino, v1.4.1](https://github.com/plenprojectcompany/plen-Firmware_Arduino/releases/tag/v1.4.1)
+- [ControlServer, v2.3.1](https://github.com/plenprojectcompany/plen-ControlServer/releases/tag/v2.3.1)
+- [MotionEditor, v1.4.0](https://github.com/plenprojectcompany/plen-MotionEditor_Web/releases/tag/v1.4.0)
+
+
 ## Enjoy More, with PLEN :)
 - Let PLEN move as you like! [Check it out.](https://plen.jp/playground/motion-editor/)
 - Learn about creativity thinking, structuring logics, or programing. [Check it out.](https://plen.jp/playground/scenography/)
@@ -29,6 +35,8 @@ The world's first printable open-source humanoid.
 
 
 ## Development Repositories
+If you want to customize something of PLEN2 yourself, please check repositories below.
+
 ### 3D Model
 - [For Fusion 360](https://github.com/plenprojectcompany/plen-3DModel_Fusion360)
 
@@ -59,6 +67,7 @@ If you are interested deeply in the firmware, please check
 
 - Printed circuit board CAD for [control-board](https://github.com/plenprojectcompany/plen-ControlBoard)
 - Printed circuit board CAD for [head-board](https://github.com/plenprojectcompany/plen-HeadBoard)
+- Printed circuit board CAD for [edison-board](https://github.com/plenprojectcompany/plen-EdisonBoard)
 
 ### Etc...
 You can see the all open-source products on [the GitHub account](https://github.com/plenprojectcompany).
