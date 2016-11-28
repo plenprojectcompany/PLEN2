@@ -1,0 +1,91 @@
+{
+    "@frame_length": 1, 
+    "@metadata": {
+        "author": "PLEN Project Company Inc.", 
+        "required-firmware": "1.4.1~", 
+        "target": "PLEN2"
+    }, 
+    "codes": [], 
+    "frames": [
+        {
+            "@index": 0, 
+            "outputs": [
+                {
+                    "device": "left_shoulder_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_thigh_yaw", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_shoulder_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_elbow_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_thigh_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_thigh_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_knee_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_foot_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_foot_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_shoulder_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_thigh_yaw", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_shoulder_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_elbow_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_thigh_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_thigh_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_knee_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_foot_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_foot_roll", 
+                    "value": 0
+                }
+            ], 
+            "transition_time_ms": 1000
+        }
+    ], 
+    "name": "Upright", 
+    "slot": 44
+}

@@ -1,0 +1,169 @@
+{
+    "@frame_length": 2, 
+    "@metadata": {
+        "author": "PLEN Project Company Inc.", 
+        "required-firmware": "1.4.1~", 
+        "target": "PLEN2"
+    }, 
+    "codes": [], 
+    "frames": [
+        {
+            "@index": 0, 
+            "outputs": [
+                {
+                    "device": "left_shoulder_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_thigh_yaw", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_shoulder_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_elbow_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_thigh_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_thigh_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_knee_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_foot_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "left_foot_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_shoulder_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_thigh_yaw", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_shoulder_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_elbow_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_thigh_roll", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_thigh_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_knee_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_foot_pitch", 
+                    "value": 0
+                }, 
+                {
+                    "device": "right_foot_roll", 
+                    "value": 0
+                }
+            ], 
+            "transition_time_ms": 800
+        }, 
+        {
+            "@index": 1, 
+            "outputs": [
+                {
+                    "device": "left_shoulder_pitch", 
+                    "value": 12
+                }, 
+                {
+                    "device": "left_thigh_yaw", 
+                    "value": -160
+                }, 
+                {
+                    "device": "left_shoulder_roll", 
+                    "value": -166
+                }, 
+                {
+                    "device": "left_elbow_roll", 
+                    "value": -297
+                }, 
+                {
+                    "device": "left_thigh_roll", 
+                    "value": -50
+                }, 
+                {
+                    "device": "left_thigh_pitch", 
+                    "value": 10
+                }, 
+                {
+                    "device": "left_knee_pitch", 
+                    "value": -238
+                }, 
+                {
+                    "device": "left_foot_pitch", 
+                    "value": -174
+                }, 
+                {
+                    "device": "left_foot_roll", 
+                    "value": -70
+                }, 
+                {
+                    "device": "right_shoulder_pitch", 
+                    "value": -2
+                }, 
+                {
+                    "device": "right_thigh_yaw", 
+                    "value": 160
+                }, 
+                {
+                    "device": "right_shoulder_roll", 
+                    "value": 130
+                }, 
+                {
+                    "device": "right_elbow_roll", 
+                    "value": 255
+                }, 
+                {
+                    "device": "right_thigh_roll", 
+                    "value": 50
+                }, 
+                {
+                    "device": "right_thigh_pitch", 
+                    "value": -3
+                }, 
+                {
+                    "device": "right_knee_pitch", 
+                    "value": 236
+                }, 
+                {
+                    "device": "right_foot_pitch", 
+                    "value": 182
+                }, 
+                {
+                    "device": "right_foot_roll", 
+                    "value": 70
+                }
+            ], 
+            "transition_time_ms": 660
+        }
+    ], 
+    "name": "Brake for Forward", 
+    "slot": 41
+}
