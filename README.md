@@ -7,12 +7,12 @@ The world's first printable open-source humanoid.
 ## Getting Started
 1. [Download](https://github.com/plenprojectcompany/PLEN2/archive/master.zip) this repository.
 2. Get control boards and servo motors. [Buy all!](https://plen.jp/shop/)
-3. Install firmware. (This is placed "/arduino/firmware/" directory.)
+3. Install the firmware. (This is placed "/arduino/firmware/" directory.)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/firmware)
 4. Print and assemble all *.stl files. (There are in the "/stl/" directory.)
     - [Print Details](http://plen.jp/playground/wiki/specifications/index.html)
     - [Assembling Instructions](https://plen.jp/playground/wiki/tutorials/index.html)
-5. Configure home positions of joints. (This step is done by using
+5. Configure home positions of joints. (This step could be done by using
    [PLEN Utils](https://github.com/plenprojectcompany/plen-ControlServer/releases).)
    [See also...](https://plen.jp/playground/wiki/tutorials/plen2/tune)
 6. Write all motions. (Please check "/motions/*/" directory and also use PLEN Utils.)
@@ -20,9 +20,9 @@ The world's first printable open-source humanoid.
 7. Hello, world where PLEN is!
 
 
-## Recmmended Software Set
+## Recommended Software Set
 - [Firmware for Arduino, v1.4.1](https://github.com/plenprojectcompany/plen-Firmware_Arduino/releases/tag/v1.4.1)
-- [ControlServer, v2.3.1](https://github.com/plenprojectcompany/plen-ControlServer/releases/tag/v2.3.1)
+- [ControlServer, v2.4.1](https://github.com/plenprojectcompany/plen-ControlServer/releases/tag/v2.4.1)
 - [MotionEditor, v1.4.0](https://github.com/plenprojectcompany/plen-MotionEditor_Web/releases/tag/v1.4.0)
 
 
@@ -38,7 +38,7 @@ The world's first printable open-source humanoid.
 If you want to customize something of PLEN2 yourself, please check repositories below.
 
 ### 3D Model
-- [For Fusion 360](https://github.com/plenprojectcompany/plen-3DModel_Fusion360)
+- [For Autodesk Fusion 360](https://github.com/plenprojectcompany/plen-3DModel_Fusion360)
 
 ### Arduino
 We define here as the default repository of the firmware,
@@ -70,7 +70,8 @@ If you are interested deeply in the firmware, please check
 - Printed circuit board CAD for [edison-board](https://github.com/plenprojectcompany/plen-EdisonBoard)
 
 ### Etc...
-You can see the all open-source products on [the GitHub account](https://github.com/plenprojectcompany).
+You could see the all open-source products on [the GitHub account](https://github.com/plenprojectcompany).
+Also, we have set up the GitHub account [plen-admin](https://github.com/plen-admin) as deprecated products manager.
 
 
 ## Laws of PLEN
