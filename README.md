@@ -82,5 +82,19 @@ You could use PLEN for every imaginable things, but please observe the following
 3. PLEN must be able to inherit its characteristics.
 
 
-## Copyright
-- [PLEN Project Company Inc](https://plen.jp/), and all contributors.
+## Copyright & Contributors
+- [PLEN Project Company Inc](https://plen.jp/)
+
+### 3D Model
+- Takuya KAMURA
+- Naohiro HAYAISHI
+- Naoki IWAMARU
+
+### Arduino Firmware
+- Kazuyuki TAKASE
+- Naohiro HAYAISHI
+
+### Motion Structure
+- Naohiro HAYAISHI
+- Natsuo AKAZAWA
+- Sho SUZUKI
